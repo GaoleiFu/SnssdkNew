@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+
+def dateTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+8"))
+}
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        applicationId "com.devdroid.snssdknew"
+        minSdkVersion 19
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+
+        manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "200"]
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("devdroid.jks")
+            storePassword "devdroid110"
+            keyAlias "devdroid"
+            keyPassword "devdroid110"
+        }
+        debug {
+            storeFile file("devdroid.jks")
+            storePassword "devdroid110"
+            keyAlias "devdroid"
+            keyPassword "devdroid110"
+        }
+    }
+
+    buildTypes {
+        release {
+            // 不显示Log
+            buildConfigField "boolean", "DEBUG", "false"
+            // 混淆
+            minifyEnabled true
+            // zipAlign优化
+            zipAlignEnabled true
+            // 移除无用的资源文件文件
+            shrinkResources true
+            // 加载默认混淆配置文件，PS:将proguard.cfg放置在主Module目录下
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+            // 签名
+            signingConfig signingConfigs.release
+            // 定义APK名称格式
+            applicationVariants.all { variant ->
+                if (variant.buildType.name == "debug") return;
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = "${defaultConfig.applicationId}_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${variant.productFlavors[0].name}_release_${dateTime()}.apk"
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
+        }
+    }
+    //渠道Flavors
+    productFlavors {
+        zhushou360 {
+            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "360zhushou"]
+        }
+        xiaomi {
+            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "xiaomi"]
+        }
+        wandoujia {
+            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "wandoujia"]
+        }
+        huawei {
+            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "huawei"]
+        }
+    }
+}
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile files('libs/eventbus-2.4.0.jar')
+}
