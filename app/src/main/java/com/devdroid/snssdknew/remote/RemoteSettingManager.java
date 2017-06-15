@@ -66,7 +66,7 @@ public class RemoteSettingManager {
 									String content = jsonGroup.optString("content");
 									if (!content.isEmpty()) {
 										SnssdkText snssdkText = new SnssdkText();
-										snssdkText.setSnssdkType(1);
+										snssdkText.setSnssdkType(0);
 										snssdkText.setIsCollection(0);
 										snssdkText.setSnssdkContent(content);
 										snssdksContent.add(snssdkText);
@@ -76,8 +76,8 @@ public class RemoteSettingManager {
 						}
 					}
 				}
-				mLoadListener.loadLoaded(snssdksContent);
 				LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(snssdksContent);
+				mLoadListener.loadLoaded(snssdksContent);
 			}
 		};
 		new Thread(okRunnable).start();

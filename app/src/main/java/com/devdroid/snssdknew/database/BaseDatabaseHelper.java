@@ -1,6 +1,8 @@
 package com.devdroid.snssdknew.database;
 
 import java.util.List;
+
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,7 +23,7 @@ public class BaseDatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * 数据库最小版本号(第一个发布的版本号)
 	 */
-	public final static int DB_MIN_VERSION = 2;
+	public final static int DB_MIN_VERSION = 1;
 
 	public BaseDatabaseHelper(Context context) {
 		this(context, DATABASE_NAME, DB_MIN_VERSION);
@@ -82,6 +84,22 @@ public class BaseDatabaseHelper extends SQLiteOpenHelper {
 				selectionArgs, groupBy, having, sortOrder,limit);
 	}
 
+	/**
+	 * 更新 update(这里用一句话描述这个方法的作用) (这里描述这个方法适用条件 – 可选)
+	 */
+	public int update(String tableName, ContentValues values, String selection,
+	                  String[] selectionArgs) throws DatabaseException {
+		return DatabaseUtils.update(this, tableName, values, selection,
+				selectionArgs);
+	}
+
+	/**
+	 * 更新 update(这里用一句话描述这个方法的作用) (这里描述这个方法适用条件 – 可选)
+	 */
+	public boolean update(List<UpdatePamas> list) throws DatabaseException {
+		return DatabaseUtils.update(this, list);
+	}
+
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.beginTransaction();
@@ -96,9 +114,6 @@ public class BaseDatabaseHelper extends SQLiteOpenHelper {
 	}
 	@Override
 	public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-		if(oldVersion == 1 && newVersion == 2){
-			sqLiteDatabase.execSQL("ALTER TABLE "+SnssdkTextTable.TABLE_NAME+" ADD "+ SnssdkTextTable.SNSSDK_TYPE  +" INTEGER"); //往表中增加一列
-			sqLiteDatabase.execSQL("ALTER TABLE "+SnssdkTextTable.TABLE_NAME+" ADD "+ SnssdkTextTable.SNSSDK_COLLECTION  +" INTEGER"); //往表中增加一列
-		}
+
 	}
 }

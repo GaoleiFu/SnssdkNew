@@ -21,17 +21,19 @@ public class SnssdkDatabaseHelper {
      * 查询当前笑话信息
      * @return
      */
-    public List<SnssdkText> querySnssdkInfo() {
+    public List<SnssdkText> querySnssdkInfo(int type) {
         List<SnssdkText> list = new ArrayList<>();
-        Cursor cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, null, null, SnssdkTextTable.ID + " DESC");
+        Cursor cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null,  SnssdkTextTable.SNSSDK_COLLECTION + "=?", new String[]{"" + type}, SnssdkTextTable.ID + " DESC");
         if (null != cursor) {
             try {
                 while (cursor.moveToNext()) {
                     String component = cursor.getString(cursor.getColumnIndex(SnssdkTextTable.COMPONENTNAME));
+                    int id = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.ID));
                     int snssdkType = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.SNSSDK_TYPE));
                     int snssdkCollection = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.SNSSDK_COLLECTION));
                     if (null != component) {
                         SnssdkText snssdkText = new SnssdkText();
+                        snssdkText.setId(id);
                         snssdkText.setSnssdkContent(component);
                         snssdkText.setIsCollection(snssdkCollection);
                         snssdkText.setSnssdkType(snssdkType);
@@ -102,6 +104,17 @@ public class SnssdkDatabaseHelper {
             list.add(delete);
         if (!list.isEmpty()) {
         	mHelper.delete(list);
+        }
+    }
+
+    public void updateSnssdkItem(SnssdkText pkgName) {
+        ArrayList<UpdatePamas> list = new ArrayList<>();
+        ContentValues values = new ContentValues();
+        values.put(SnssdkTextTable.SNSSDK_COLLECTION,pkgName.getIsCollection());
+        UpdatePamas update = new UpdatePamas(SnssdkTextTable.TABLE_NAME, values, SnssdkTextTable.ID + "=?", new String[]{pkgName.getId() + ""});
+        list.add(update);
+        if (!list.isEmpty()) {
+            mHelper.update(list);
         }
     }
 }

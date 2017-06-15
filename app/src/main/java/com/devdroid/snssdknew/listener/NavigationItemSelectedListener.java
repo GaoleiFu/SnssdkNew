@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.activity.AboutActivity;
 import com.devdroid.snssdknew.activity.FeedbackActivity;
+import com.devdroid.snssdknew.activity.MainActivity;
 import com.devdroid.snssdknew.utils.DevicesUtils;
 
 /**
@@ -21,20 +22,23 @@ import com.devdroid.snssdknew.utils.DevicesUtils;
  * I'm glad to share my knowledge with you all.
  */
 public class NavigationItemSelectedListener  implements NavigationView.OnNavigationItemSelectedListener {
-    private AppCompatActivity mAppCompatActivity;
-    public NavigationItemSelectedListener(AppCompatActivity appCompatActivity) {
+    private MainActivity mAppCompatActivity;
+    private DrawerLayout mDrawerLayout;
+    public NavigationItemSelectedListener(MainActivity appCompatActivity, DrawerLayout drawer) {
         this.mAppCompatActivity = appCompatActivity;
+        this.mDrawerLayout = drawer;
     }
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_text :
+                mAppCompatActivity.setSnssdkType(0);
                 break;
             case R.id.nav_gallery :
 
                 break;
             case R.id.nav_collection :
-
+                mAppCompatActivity.setSnssdkType(1);
                 break;
             case R.id.nav_share :
                 shareText();
@@ -46,6 +50,7 @@ public class NavigationItemSelectedListener  implements NavigationView.OnNavigat
                 mAppCompatActivity.startActivity(new Intent(mAppCompatActivity, AboutActivity.class));
                 break;
         }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

@@ -22,9 +22,12 @@ import com.devdroid.snssdknew.base.BaseActivity;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
 import com.devdroid.snssdknew.manager.SnssdkTextManager;
+import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
 import com.devdroid.snssdknew.utils.SimpleItemTouchHelperCallback;
+
+import java.util.List;
 
 /**
  * 主界面
@@ -45,6 +48,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     };
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SwitchCompat mSwNetSetting;
+    private int mType = 0;
+    private List<SnssdkText> mSnssdkTexts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +76,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 }
             }
         });
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSnssdkAdapter);
-        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     private void initView() {
@@ -85,7 +87,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.main_navigation_view);
         mSwNetSetting = (SwitchCompat)navigationView.getHeaderView(0).findViewById(R.id.switch_nav_header_net);
-        NavigationItemSelectedListener navigationItemSelectedListener = new NavigationItemSelectedListener(this);
+        NavigationItemSelectedListener navigationItemSelectedListener = new NavigationItemSelectedListener(this, drawer);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
@@ -94,8 +96,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
-        mSnssdkAdapter = new SnssdkTextAdapter(this, SnssdkTextManager.getInstance().getmSnssdks());
+        mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
+        mSnssdkAdapter = new SnssdkTextAdapter(this, mSnssdkTexts);
         mRecyclerView.setAdapter(mSnssdkAdapter);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSnssdkAdapter);
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -116,7 +122,17 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        SnssdkTextManager.getInstance().freshMore(this);
+        if(mType == 0) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            SnssdkTextManager.getInstance().freshMore(this);
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    public void setSnssdkType(int type){
+        this.mType = type;
+        mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
+        mSnssdkAdapter.notifyDataSetChanged();
     }
 }

@@ -132,4 +132,44 @@ public class DatabaseUtils {
 		}
 		return result;
 	}
+
+	public static int update(SQLiteOpenHelper sqLiteOpenHelper, String tableName, ContentValues values, String selection, String[] selectionArgs) throws DatabaseException {
+		int count = 0;
+		try {
+			SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
+			count = db.update(tableName, values, selection, selectionArgs);
+		} catch (Exception e) {
+			throw new DatabaseException(e);
+		}
+		return count;
+	}
+
+	public static boolean update(SQLiteOpenHelper sqLiteOpenHelper, List<UpdatePamas> list)  throws DatabaseException {
+		boolean isSucces = false;
+		if (null != list && !list.isEmpty()) {
+			SQLiteDatabase db = null;
+			try {
+				db = sqLiteOpenHelper.getWritableDatabase();
+				db.beginTransaction();
+				for (UpdatePamas updatePamas : list) {
+					db.update(updatePamas.getTableName(), updatePamas.getContentValues(), updatePamas.getSelection(), updatePamas.getWhereArgs());
+				}
+				db.setTransactionSuccessful();
+				isSucces = true;
+			} catch (Exception e) {
+				throw new DatabaseException(e);
+			} finally {
+				if (null != db) {
+					if (null != db) {
+						try {
+							db.endTransaction();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+		return isSucces;
+	}
 }

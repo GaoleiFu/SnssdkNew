@@ -37,7 +37,7 @@ public class SnssdkTextManager implements LoadListener {
 
     private void init() {
         mRemoteSettingManager = new RemoteSettingManager(this);
-        mSnssdks = loadMore();
+        mSnssdks = loadMore(0);
     }
     /**
      * 初始化单例,在程序启动时调用<br>
@@ -99,10 +99,8 @@ public class SnssdkTextManager implements LoadListener {
     /**
      * 上拉数据库加载
      */
-    public List<SnssdkText> loadMore() {
-        List<SnssdkText> cacheSnssdk = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo();
-        mSnssdks.addAll(cacheSnssdk);
-        SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
+    public List<SnssdkText> loadMore(int type) {
+        List<SnssdkText> cacheSnssdk = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
         return cacheSnssdk;
     }
 
@@ -112,11 +110,17 @@ public class SnssdkTextManager implements LoadListener {
     @Override
     public void loadLoaded(List<SnssdkText> snssdks) {
         mSnssdks.clear();
-        loadMore();
+        mSnssdks.addAll(loadMore(0));
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
     }
 
-    public List<SnssdkText> getmSnssdks() {
+    public List<SnssdkText> getmSnssdks(int type) {
+        mSnssdks.clear();
+        if(type == 0) {
+            mSnssdks.addAll(loadMore(0));
+        } else {
+            mSnssdks.addAll(loadMore(1));
+        }
         return mSnssdks;
     }
 }

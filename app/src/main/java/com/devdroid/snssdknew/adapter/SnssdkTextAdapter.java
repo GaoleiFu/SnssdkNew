@@ -51,15 +51,6 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         return snssdks.size();
     }
 
-    public String removeItem(int position) {
-        if(snssdks != null && snssdks.size() > position) {
-            String currentItem = snssdks.get(position).getSnssdkContent();
-            snssdks.remove(position);
-            return currentItem;
-        }
-        return null;
-    }
-
     @Override
     public void onItemDismiss(int position) {
         LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdks.get(position));
@@ -69,8 +60,16 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public void onItemShare(int position,View currentView) {
-        shareText(snssdks.get(position).getSnssdkContent());
-        notifyItemChanged(position);
+        SnssdkText snssdkText = snssdks.get(position);
+        if(snssdkText.getIsCollection() == 1) {
+            shareText(snssdkText.getSnssdkContent());
+            notifyItemChanged(position);
+        } else {
+            snssdkText.setIsCollection(1);
+            LauncherModel.getInstance().getSnssdkTextDao().updateSnssdkItem(snssdkText);
+            snssdks.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

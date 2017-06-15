@@ -23,8 +23,8 @@ public class SnssdkTextDao {
         mSnssdkDatabaseHelper = new SnssdkDatabaseHelper(context, dataProvider);
     }
 
-    public List<SnssdkText> queryLockerInfo() {
-        return mSnssdkDatabaseHelper.querySnssdkInfo();
+    public List<SnssdkText> queryLockerInfo(int type) {
+        return mSnssdkDatabaseHelper.querySnssdkInfo(type);
     }
 
     public void insertSnssdkItem(List<SnssdkText> insertList) {
@@ -36,8 +36,8 @@ public class SnssdkTextDao {
         mSnssdkDatabaseHelper.deleteSnssdkItem(packageName);
     }
 
-    public void insertSnssdkItem(SnssdkText packageName) {
-        mSnssdkDatabaseHelper.insertSnssdkItem(packageName);
+    public void updateSnssdkItem(SnssdkText packageName) {
+        mSnssdkDatabaseHelper.updateSnssdkItem(packageName);
     }
 
 }

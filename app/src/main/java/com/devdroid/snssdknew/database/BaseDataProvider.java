@@ -1,6 +1,8 @@
 package com.devdroid.snssdknew.database;
 
 import java.util.List;
+
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 /**
@@ -64,5 +66,55 @@ public class BaseDataProvider {
 	
 	public Cursor rawQuery(String sql) {
 		return rawQuery(sql, null);
+	}
+
+	/**
+	 * 更新
+	 * update(这里用一句话描述这个方法的作用)
+	 */
+	public boolean update(String tableName, ContentValues values, String selection) {
+		synchronized (mLock) {
+			boolean isSuccess = false;
+			try {
+				int count = mDBHelper.update(tableName, values, selection, null);
+				if (count > 0) {
+					isSuccess = true;
+				}
+			} catch (DatabaseException e) {
+				e.printStackTrace();
+			}
+			return isSuccess;
+		}
+	}
+
+	/**
+	 * 更新
+	 * update(这里用一句话描述这个方法的作用)
+	 */
+	public boolean update(String tableName, ContentValues values, String selection, String[] selectionArgs) {
+		synchronized (mLock) {
+			boolean isSuccess = false;
+			try {
+				int count = mDBHelper.update(tableName, values, selection, selectionArgs);
+				if (count > 0) {
+					isSuccess = true;
+				}
+			} catch (DatabaseException e) {
+				e.printStackTrace();
+			}
+			return isSuccess;
+		}
+	}
+
+	public boolean update(List<UpdatePamas> list) {
+		synchronized (mLock) {
+			boolean isSuccess = false;
+			try {
+				isSuccess = mDBHelper.update(list);
+			} catch (DatabaseException e) {
+				e.printStackTrace();
+			}
+			return isSuccess;
+		}
 	}
 }
