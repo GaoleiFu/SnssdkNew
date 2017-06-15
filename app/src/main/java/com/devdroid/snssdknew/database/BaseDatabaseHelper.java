@@ -21,7 +21,7 @@ public class BaseDatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * 数据库最小版本号(第一个发布的版本号)
 	 */
-	public final static int DB_MIN_VERSION = 1;
+	public final static int DB_MIN_VERSION = 2;
 
 	public BaseDatabaseHelper(Context context) {
 		this(context, DATABASE_NAME, DB_MIN_VERSION);
@@ -95,6 +95,10 @@ public class BaseDatabaseHelper extends SQLiteOpenHelper {
 		}
 	}
 	@Override
-	public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+	public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+		if(oldVersion == 1 && newVersion == 2){
+			sqLiteDatabase.execSQL("ALTER TABLE "+SnssdkTextTable.TABLE_NAME+" ADD "+ SnssdkTextTable.SNSSDK_TYPE  +" INTEGER"); //往表中增加一列
+			sqLiteDatabase.execSQL("ALTER TABLE "+SnssdkTextTable.TABLE_NAME+" ADD "+ SnssdkTextTable.SNSSDK_COLLECTION  +" INTEGER"); //往表中增加一列
+		}
 	}
 }

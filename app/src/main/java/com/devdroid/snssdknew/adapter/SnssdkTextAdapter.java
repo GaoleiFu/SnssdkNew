@@ -11,6 +11,7 @@ import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
 import com.devdroid.snssdknew.manager.SnssdkTextManager;
+import com.devdroid.snssdknew.model.SnssdkText;
 
 import java.util.List;
 
@@ -23,8 +24,8 @@ import java.util.List;
 public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.ViewHolder> implements OnDismissAndShareListener {
 
     private Context mContext;
-    private List<String> snssdks;
-    public SnssdkTextAdapter(Context context, List<String> snssdks){
+    private List<SnssdkText> snssdks;
+    public SnssdkTextAdapter(Context context, List<SnssdkText> snssdks){
         this.mContext = context;
         this.snssdks = snssdks;
     }
@@ -39,7 +40,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(snssdks != null && snssdks.size() > position) {
-            holder.mTextValue.setText(snssdks.get(position));
+            holder.mTextValue.setText(snssdks.get(position).getSnssdkContent());
             holder.mTextValue.requestFocus();
         }
     }
@@ -52,7 +53,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     public String removeItem(int position) {
         if(snssdks != null && snssdks.size() > position) {
-            String currentItem = snssdks.get(position);
+            String currentItem = snssdks.get(position).getSnssdkContent();
             snssdks.remove(position);
             return currentItem;
         }
@@ -68,7 +69,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public void onItemShare(int position,View currentView) {
-        shareText(snssdks.get(position));
+        shareText(snssdks.get(position).getSnssdkContent());
         notifyItemChanged(position);
     }
 

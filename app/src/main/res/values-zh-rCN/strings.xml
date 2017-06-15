@@ -11,6 +11,7 @@
     <string name="nav_string_share">分享</string>
     <string name="nav_string_text">笑话</string>
     <string name="nav_string_voide">视频</string>
+    <string name="nav_string_collection">收藏</string>
     <string name="nav_string_other">其它</string>
     <string name="nav_string_image">图片</string>
     <string name="nav_string_feedback">反馈</string>

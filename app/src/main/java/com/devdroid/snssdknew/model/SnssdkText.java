@@ -7,4 +7,33 @@ package com.devdroid.snssdknew.model;
  * I'm glad to share my knowledge with you all.
  */
 public class SnssdkText {
+	private int snssdkType;
+	private int isCollection;
+	private String snssdkContent;
+	public SnssdkText() {
+	}
+
+	public int getSnssdkType() {
+		return snssdkType;
+	}
+
+	public void setSnssdkType(int snssdkType) {
+		this.snssdkType = snssdkType;
+	}
+
+	public int getIsCollection() {
+		return isCollection;
+	}
+
+	public void setIsCollection(int isCollection) {
+		this.isCollection = isCollection;
+	}
+
+	public String getSnssdkContent() {
+		return snssdkContent;
+	}
+
+	public void setSnssdkContent(String snssdkContent) {
+		this.snssdkContent = snssdkContent;
+	}
 }

@@ -16,6 +16,7 @@ import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
+import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.remote.LoadListener;
 import com.devdroid.snssdknew.remote.RemoteSettingManager;
@@ -26,7 +27,7 @@ import com.devdroid.snssdknew.remote.RemoteSettingManager;
 public class SnssdkTextManager implements LoadListener {
 
     private static SnssdkTextManager sInstance;
-    private List<String> mSnssdks;
+    private List<SnssdkText> mSnssdks;
     private RemoteSettingManager mRemoteSettingManager;
 
     private SnssdkTextManager() {
@@ -69,8 +70,9 @@ public class SnssdkTextManager implements LoadListener {
     private boolean checkPermissions(Context context) {
         if (Build.VERSION.SDK_INT >= 23) {
             if(!(context instanceof Activity)) return false;
-            boolean readPhoneStateable = LauncherModel.getInstance().getSharedPreferencesManager().getBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_READ_PHONE_STATE,false);
-            if(!readPhoneStateable) {
+            int checkCallPhonePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE);
+//            boolean readPhoneStateable = LauncherModel.getInstance().getSharedPreferencesManager().getBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_READ_PHONE_STATE,false);
+            if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_PHONE_STATE}, 10010);
                 int i = 0;
                 do {
@@ -79,13 +81,13 @@ public class SnssdkTextManager implements LoadListener {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    int checkCallPhonePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE);
+                    checkCallPhonePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE);
                     if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED && i >= 25) {
                         Toast.makeText(context, context.getResources().getString(R.string.string_no_phone_state), Toast.LENGTH_SHORT).show();
                         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
                         return false;
                     } else if (checkCallPhonePermission == PackageManager.PERMISSION_GRANTED) {
-                        LauncherModel.getInstance().getSharedPreferencesManager().commitBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_READ_PHONE_STATE, true);
+//                        LauncherModel.getInstance().getSharedPreferencesManager().commitBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_READ_PHONE_STATE, true);
                         break;
                     }
                 } while (i++ < 25);
@@ -97,8 +99,8 @@ public class SnssdkTextManager implements LoadListener {
     /**
      * 上拉数据库加载
      */
-    public List<String> loadMore() {
-        List<String> cacheSnssdk = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo();
+    public List<SnssdkText> loadMore() {
+        List<SnssdkText> cacheSnssdk = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo();
         mSnssdks.addAll(cacheSnssdk);
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
         return cacheSnssdk;
@@ -108,14 +110,13 @@ public class SnssdkTextManager implements LoadListener {
      * 数据联网加载成功
      */
     @Override
-    public void loadLoaded(List<String> snssdks) {
+    public void loadLoaded(List<SnssdkText> snssdks) {
         mSnssdks.clear();
         loadMore();
-//        mLoadingAd = false;
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
     }
 
-    public List<String> getmSnssdks() {
+    public List<SnssdkText> getmSnssdks() {
         return mSnssdks;
     }
 }

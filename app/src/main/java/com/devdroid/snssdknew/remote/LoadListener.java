@@ -1,5 +1,7 @@
 package com.devdroid.snssdknew.remote;
 
+import com.devdroid.snssdknew.model.SnssdkText;
+
 import java.util.List;
 
 /**
@@ -9,5 +11,5 @@ import java.util.List;
  * I'm glad to share my knowledge with you all.
  */
 public interface LoadListener {
-    void loadLoaded(List<String> snssdks);
+    void loadLoaded(List<SnssdkText> snssdks);
 }

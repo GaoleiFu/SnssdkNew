@@ -6,6 +6,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.devdroid.snssdknew.model.SnssdkText;
+
 public class SnssdkDatabaseHelper {
 
 	public static final String TAG = SnssdkDatabaseHelper.class.getSimpleName();
@@ -16,18 +18,24 @@ public class SnssdkDatabaseHelper {
 		mHelper = dataProvider;
 	}
     /**
-     * 查询当前加锁应用信息
+     * 查询当前笑话信息
      * @return
      */
-    public List<String> querySnssdkInfo() {
-        List<String> list = new ArrayList<String>();
+    public List<SnssdkText> querySnssdkInfo() {
+        List<SnssdkText> list = new ArrayList<>();
         Cursor cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, null, null, SnssdkTextTable.ID + " DESC");
         if (null != cursor) {
             try {
                 while (cursor.moveToNext()) {
                     String component = cursor.getString(cursor.getColumnIndex(SnssdkTextTable.COMPONENTNAME));
+                    int snssdkType = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.SNSSDK_TYPE));
+                    int snssdkCollection = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.SNSSDK_COLLECTION));
                     if (null != component) {
-                        list.add(component);
+                        SnssdkText snssdkText = new SnssdkText();
+                        snssdkText.setSnssdkContent(component);
+                        snssdkText.setIsCollection(snssdkCollection);
+                        snssdkText.setSnssdkType(snssdkType);
+                        list.add(snssdkText);
                     }
                 }
             } catch (Exception e) {
@@ -56,12 +64,14 @@ public class SnssdkDatabaseHelper {
         }
         return false;
     }
-    public void insertSnssdkItem(List<String> insertSnssdkList) {
+    public void insertSnssdkItem(List<SnssdkText> insertSnssdkList) {
         ArrayList<InsertParams> list = new ArrayList<InsertParams>();
-        for (String pkgName : insertSnssdkList) {
+        for (SnssdkText pkgName : insertSnssdkList) {
             if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + pkgName + "'")) {
                 ContentValues values = new ContentValues();
-                values.put(SnssdkTextTable.COMPONENTNAME,pkgName);
+                values.put(SnssdkTextTable.COMPONENTNAME,pkgName.getSnssdkContent());
+                values.put(SnssdkTextTable.SNSSDK_TYPE,pkgName.getSnssdkType());
+                values.put(SnssdkTextTable.SNSSDK_COLLECTION,pkgName.getIsCollection());
                 InsertParams insert = new InsertParams(SnssdkTextTable.TABLE_NAME, values);
                 list.add(insert);
             }
@@ -71,22 +81,13 @@ public class SnssdkDatabaseHelper {
         }
     }
 
-    public void deleteSnssdkItem(List<String> deleteSnssdkList) {
-        ArrayList<DeletePamas> list = new ArrayList<DeletePamas>();
-        for (String pkgName : deleteSnssdkList) {
-            DeletePamas delete = new DeletePamas(SnssdkTextTable.TABLE_NAME, SnssdkTextTable.COMPONENTNAME + "=?", new String[]{pkgName});
-            list.add(delete);
-        }
-        if (!list.isEmpty()) {
-            mHelper.delete(list);
-        }
-    }
-
-    public void insertSnssdkItem(String pkgName) {
+    public void insertSnssdkItem(SnssdkText pkgName) {
         ArrayList<InsertParams> list = new ArrayList<InsertParams>();
         if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + pkgName + "'")) {
             ContentValues values = new ContentValues();
-            values.put(SnssdkTextTable.COMPONENTNAME,pkgName);
+            values.put(SnssdkTextTable.COMPONENTNAME,pkgName.getSnssdkContent());
+            values.put(SnssdkTextTable.SNSSDK_TYPE,pkgName.getSnssdkType());
+            values.put(SnssdkTextTable.SNSSDK_COLLECTION,pkgName.getIsCollection());
             InsertParams insert = new InsertParams(SnssdkTextTable.TABLE_NAME, values);
             list.add(insert);
         }
@@ -95,9 +96,9 @@ public class SnssdkDatabaseHelper {
         }
     }
 
-    public void deleteSnssdkItem(String pkgName) {
-    	ArrayList<DeletePamas> list = new ArrayList<DeletePamas>();
-        	DeletePamas delete = new DeletePamas(SnssdkTextTable.TABLE_NAME, SnssdkTextTable.COMPONENTNAME + "=?", new String[]{pkgName});
+    public void deleteSnssdkItem(SnssdkText pkgName) {
+    	ArrayList<DeletePamas> list = new ArrayList<>();
+        	DeletePamas delete = new DeletePamas(SnssdkTextTable.TABLE_NAME, SnssdkTextTable.COMPONENTNAME + "=?", new String[]{pkgName.getSnssdkContent()});
             list.add(delete);
         if (!list.isEmpty()) {
         	mHelper.delete(list);

@@ -35,8 +35,6 @@ android {
 
     buildTypes {
         release {
-            // 不显示Log
-            buildConfigField "boolean", "DEBUG", "false"
             // 混淆
             minifyEnabled true
             // zipAlign优化

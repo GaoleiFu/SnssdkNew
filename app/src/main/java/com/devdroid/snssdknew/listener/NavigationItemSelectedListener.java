@@ -33,10 +33,8 @@ public class NavigationItemSelectedListener  implements NavigationView.OnNavigat
             case R.id.nav_gallery :
 
                 break;
-            case R.id.nav_video :
+            case R.id.nav_collection :
 
-                break;
-            case R.id.nav_edit :
                 break;
             case R.id.nav_share :
                 shareText();

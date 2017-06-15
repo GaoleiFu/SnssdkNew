@@ -3,6 +3,8 @@ package com.devdroid.snssdknew.database;
 import java.util.List;
 import android.content.Context;
 
+import com.devdroid.snssdknew.model.SnssdkText;
+
 /**
  * 关于Snssdk信息的数据管理
  * @author zhanghuijun
@@ -21,24 +23,20 @@ public class SnssdkTextDao {
         mSnssdkDatabaseHelper = new SnssdkDatabaseHelper(context, dataProvider);
     }
 
-    public List<String> queryLockerInfo() {
+    public List<SnssdkText> queryLockerInfo() {
         return mSnssdkDatabaseHelper.querySnssdkInfo();
     }
 
-    public void insertSnssdkItem(List<String> insertList) {
+    public void insertSnssdkItem(List<SnssdkText> insertList) {
         mSnssdkDatabaseHelper.insertSnssdkItem(insertList);
     }
 
-    public void deleteSnssdkItem(List<String> deleteList) {
-        mSnssdkDatabaseHelper.deleteSnssdkItem(deleteList);
-    }
 
-
-    public void deleteSnssdkItem(String packageName) {
+    public void deleteSnssdkItem(SnssdkText packageName) {
         mSnssdkDatabaseHelper.deleteSnssdkItem(packageName);
     }
 
-    public void insertSnssdkItem(String packageName) {
+    public void insertSnssdkItem(SnssdkText packageName) {
         mSnssdkDatabaseHelper.insertSnssdkItem(packageName);
     }
 

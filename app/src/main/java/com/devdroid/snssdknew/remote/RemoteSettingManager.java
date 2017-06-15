@@ -15,6 +15,7 @@ import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.constant.ApiConstant;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.manager.SharedPreferencesManager;
+import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.utils.Machine;
 
@@ -53,7 +54,7 @@ public class RemoteSettingManager {
 		Runnable okRunnable = new Runnable() {
 			@Override
 			public void run() {
-				LinkedList<String> snssdksContent = new LinkedList<>();
+				LinkedList<SnssdkText> snssdksContent = new LinkedList<>();
 				if(result != null) {
 					JSONObject jSonData = result.optJSONObject("data");
 					if (jSonData != null) {
@@ -64,7 +65,11 @@ public class RemoteSettingManager {
 								if (jsonGroup != null) {
 									String content = jsonGroup.optString("content");
 									if (!content.isEmpty()) {
-										snssdksContent.add(content);
+										SnssdkText snssdkText = new SnssdkText();
+										snssdkText.setSnssdkType(1);
+										snssdkText.setIsCollection(0);
+										snssdkText.setSnssdkContent(content);
+										snssdksContent.add(snssdkText);
 									}
 								}
 							}

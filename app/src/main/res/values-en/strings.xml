@@ -27,6 +27,7 @@
     <string name="nav_string_other">Other</string>
     <string name="nav_string_share">Share</string>
     <string name="nav_string_text">Text</string>
+    <string name="nav_string_collection">Collection</string>
     <string name="nav_string_voide">Video</string>
     <string name="nav_string_setting_net">Offline Mode</string>
     <string name="feedback_content">The following are the system information required to resolve your problem. We will never collect any of your personal information.</string>

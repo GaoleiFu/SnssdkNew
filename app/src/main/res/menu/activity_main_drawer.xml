@@ -11,13 +11,9 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/nav_string_image" />
         <item
-            android:id="@+id/nav_video"
+            android:id="@+id/nav_collection"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/nav_string_voide" />
-        <item
-            android:id="@+id/nav_edit"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/action_settings" />
+            android:title="@string/nav_string_collection" />
     </group>
 
     <item android:title="@string/nav_string_other">
