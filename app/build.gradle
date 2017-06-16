@@ -61,14 +61,8 @@ android {
     }
     //渠道Flavors
     productFlavors {
-        zhushou360 {
-            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "360zhushou"]
-        }
-        xiaomi {
-            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "xiaomi"]
-        }
-        wandoujia {
-            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "wandoujia"]
+        devdroid {
+            manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "devdroid"]
         }
         huawei {
             manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "huawei"]
