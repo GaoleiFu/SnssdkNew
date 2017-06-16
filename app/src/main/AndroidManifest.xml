@@ -52,11 +52,6 @@
                   android:label="@string/nav_string_feedback" />
         <activity android:name=".activity.AboutActivity"
                   android:label="@string/nav_string_about">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain"/>
-            </intent-filter>
         </activity>
     </application>
 
