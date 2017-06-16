@@ -9,16 +9,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.devdroid.snssdknew.R;
+import com.devdroid.snssdknew.base.BaseActivity;
 
 /**
  * 关于界面
  */
-public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
+public class AboutActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +29,9 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView() {
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         TextView tvVersion = (TextView) findViewById(R.id.tv_app_version);
         LinearLayout llAppRight = (LinearLayout)findViewById(R.id.ll_app_right);
         llAppRight.setOnClickListener(this);
@@ -39,7 +44,14 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
     }
-
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

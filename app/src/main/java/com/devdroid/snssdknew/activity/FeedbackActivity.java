@@ -43,6 +43,9 @@ public class FeedbackActivity extends BaseActivity {
         init();
     }
     private void init(){
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         mContainer = (EditText)findViewById(R.id.container_setting_feedback);
         mSelect = (TextView)findViewById(R.id.setting_feedback_menu_select);
         mNotice = (TextView)findViewById(R.id.notice_setting_feedback);
@@ -158,7 +161,7 @@ public class FeedbackActivity extends BaseActivity {
     @Override
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==0){
+        if(item.getItemId()==0 || item.getItemId() == android.R.id.home){
             finish();
             return true;
         }

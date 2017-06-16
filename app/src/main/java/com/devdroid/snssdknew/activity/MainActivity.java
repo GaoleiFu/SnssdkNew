@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private SwitchCompat mSwNetSetting;
     private int mType = 0;
     private List<SnssdkText> mSnssdkTexts;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +77,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.main_navigation_view);
@@ -128,6 +129,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     public void setSnssdkType(int type){
+        if(type == 0){
+            mToolbar.setTitle(getString(R.string.nav_string_text));
+        } else if(type == 1){
+            mToolbar.setTitle(getString(R.string.nav_string_collection));
+        }
         this.mType = type;
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
         mSnssdkAdapter.notifyDataSetChanged();
