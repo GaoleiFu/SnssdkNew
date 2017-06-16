@@ -6,13 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
-import com.devdroid.snssdknew.manager.SnssdkTextManager;
 import com.devdroid.snssdknew.model.SnssdkText;
-
 import java.util.List;
 
 /**
@@ -33,8 +30,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = View.inflate(parent.getContext(), R.layout.item_snssdk_text, null);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -72,15 +68,15 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView mTextValue;
-        public ViewHolder(View itemView) {
+    class ViewHolder extends RecyclerView.ViewHolder{
+        TextView mTextValue;
+        ViewHolder(View itemView) {
             super(itemView);
             mTextValue = (TextView)itemView.findViewById(R.id.item_snssdk_text_value);
         }
     }
 
-    public void shareText(String text) {
+    private void shareText(String text) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TITLE,text);

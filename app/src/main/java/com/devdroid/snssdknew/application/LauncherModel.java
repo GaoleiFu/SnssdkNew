@@ -21,7 +21,7 @@ public class LauncherModel {
         Context mContext = context.getApplicationContext();
         mSharedPreferencesManager = new SharedPreferencesManager(mContext);
         BaseDataProvider dataProvider = new BaseDataProvider(mContext);
-        mSnssdkTextDao = new SnssdkTextDao(mContext, dataProvider);
+        mSnssdkTextDao = new SnssdkTextDao(dataProvider);
     }
     /**
      * 初始化单例,在程序启动时调用<br>

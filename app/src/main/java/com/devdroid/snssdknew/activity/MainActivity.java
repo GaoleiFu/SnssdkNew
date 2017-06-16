@@ -11,9 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.CompoundButton;
-
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.adapter.SnssdkTextAdapter;
 import com.devdroid.snssdknew.application.LauncherModel;
@@ -33,7 +31,6 @@ import java.util.List;
  * 主界面
  */
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
-    private RecyclerView mRecyclerView;
     private SnssdkTextAdapter mSnssdkAdapter;
     /**
      * 事件监听
@@ -83,7 +80,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.main_navigation_view);
         mSwNetSetting = (SwitchCompat)navigationView.getHeaderView(0).findViewById(R.id.switch_nav_header_net);
@@ -92,16 +89,16 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
         mSnssdkAdapter = new SnssdkTextAdapter(this, mSnssdkTexts);
-        mRecyclerView.setAdapter(mSnssdkAdapter);
+        recyclerView.setAdapter(mSnssdkAdapter);
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSnssdkAdapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override

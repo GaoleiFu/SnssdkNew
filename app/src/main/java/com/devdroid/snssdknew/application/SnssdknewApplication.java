@@ -31,7 +31,7 @@ public class SnssdknewApplication extends Application {
 //        sGLOBAL_REQUEST_QUEUE = Volley.newRequestQueue(this);
         CrashHandler.getInstance().init(this, ApiConstant.LOG_DIR);
         LauncherModel.initSingleton(this);
-        SnssdkTextManager.initSingleton(this);
+        SnssdkTextManager.initSingleton();
     }
     /**
      * 获取一个全局的RequestQueue实例<br>

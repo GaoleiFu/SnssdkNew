@@ -21,8 +21,7 @@ import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.remote.LoadListener;
 import com.devdroid.snssdknew.remote.RemoteSettingManager;
 /**
- * 广告业务管理类<br>
- * @author laojiale
+ * 笑话业务管理类<br>
  */
 public class SnssdkTextManager implements LoadListener {
 
@@ -42,7 +41,7 @@ public class SnssdkTextManager implements LoadListener {
     /**
      * 初始化单例,在程序启动时调用<br>
      */
-    public static void initSingleton(Context context) {
+    public static void initSingleton() {
         sInstance = new SnssdkTextManager();
     }
 
@@ -64,7 +63,6 @@ public class SnssdkTextManager implements LoadListener {
         if(checkPermissions(context)) {
             mRemoteSettingManager.connectToServer(context);
         }
-        return ;
     }
 
     private boolean checkPermissions(Context context) {
@@ -99,9 +97,8 @@ public class SnssdkTextManager implements LoadListener {
     /**
      * 上拉数据库加载
      */
-    public List<SnssdkText> loadMore(int type) {
-        List<SnssdkText> cacheSnssdk = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
-        return cacheSnssdk;
+    private List<SnssdkText> loadMore(int type) {
+        return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
     }
 
     /**

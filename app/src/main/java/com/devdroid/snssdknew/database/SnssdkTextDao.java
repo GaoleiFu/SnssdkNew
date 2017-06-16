@@ -1,8 +1,6 @@
 package com.devdroid.snssdknew.database;
 
 import java.util.List;
-import android.content.Context;
-
 import com.devdroid.snssdknew.model.SnssdkText;
 
 /**
@@ -11,16 +9,9 @@ import com.devdroid.snssdknew.model.SnssdkText;
  *
  */
 public class SnssdkTextDao {
-
     private SnssdkDatabaseHelper mSnssdkDatabaseHelper = null;
-    /**
-     * Context
-     */
-    private Context mContext = null;
-
-    public SnssdkTextDao(Context context, BaseDataProvider dataProvider) {
-        mContext = context;
-        mSnssdkDatabaseHelper = new SnssdkDatabaseHelper(context, dataProvider);
+    public SnssdkTextDao(BaseDataProvider dataProvider) {
+        mSnssdkDatabaseHelper = new SnssdkDatabaseHelper(dataProvider);
     }
 
     public List<SnssdkText> queryLockerInfo(int type) {
@@ -32,12 +23,12 @@ public class SnssdkTextDao {
     }
 
 
-    public void deleteSnssdkItem(SnssdkText packageName) {
-        mSnssdkDatabaseHelper.deleteSnssdkItem(packageName);
+    public void deleteSnssdkItem(SnssdkText snssdkText) {
+        mSnssdkDatabaseHelper.deleteSnssdkItem(snssdkText);
     }
 
-    public void updateSnssdkItem(SnssdkText packageName) {
-        mSnssdkDatabaseHelper.updateSnssdkItem(packageName);
+    public void updateSnssdkItem(SnssdkText snssdkText) {
+        mSnssdkDatabaseHelper.updateSnssdkItem(snssdkText);
     }
 
 }
