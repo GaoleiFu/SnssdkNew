@@ -10,5 +10,8 @@ public class ApiConstant {
     public static final String LOG_DIR = "/snssdk/log/";
     //下拉获取更新
     public static final String GET_SNSSDK_URL_FRESH = "http://ic.snssdk.com/neihan/stream/mix/v1/?mpic=1&content_type=-102&count=30&iid=5804114303&device_id=%s";
+    //图片接口
+    public static final String GET_SNSSDK_IMAGE_URL_FRESH = "http://ic.snssdk.com/neihan/stream/mix/v1/?mpic=1&content_type=-102&count=30&iid=5804114303&device_id=%s";
+
 
 }
