@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
+
+import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
 
 class SnssdkDatabaseHelper {
@@ -14,9 +16,14 @@ class SnssdkDatabaseHelper {
     /**
      * 查询当前笑话信息
      */
-    List<SnssdkText> querySnssdkInfo(int type) {
-        List<SnssdkText> list = new ArrayList<>();
-        Cursor cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null,  SnssdkTextTable.SNSSDK_COLLECTION + "=?", new String[]{"" + type}, SnssdkTextTable.ID + " DESC");
+    List<BaseSnssdkModel> querySnssdkInfo(int type) {
+        List<BaseSnssdkModel> list = new ArrayList<>();
+        Cursor cursor;
+        if(type < 2) {
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=?", new String[]{"" + type}, SnssdkTextTable.ID + " DESC");
+        } else {
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"" + type}, SnssdkTextTable.ID + " DESC");
+        }
         if (null != cursor) {
             try {
                 while (cursor.moveToNext()) {

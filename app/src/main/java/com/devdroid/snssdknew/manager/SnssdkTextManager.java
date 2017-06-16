@@ -16,6 +16,7 @@ import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
+import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.remote.LoadListener;
@@ -26,7 +27,7 @@ import com.devdroid.snssdknew.remote.RemoteSettingManager;
 public class SnssdkTextManager implements LoadListener {
 
     private static SnssdkTextManager sInstance;
-    private List<SnssdkText> mSnssdks;
+    private List<BaseSnssdkModel> mSnssdks;
     private RemoteSettingManager mRemoteSettingManager;
 
     private SnssdkTextManager() {
@@ -97,7 +98,7 @@ public class SnssdkTextManager implements LoadListener {
     /**
      * 上拉数据库加载
      */
-    private List<SnssdkText> loadMore(int type) {
+    private List<BaseSnssdkModel> loadMore(int type) {
         return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
     }
 
@@ -111,13 +112,9 @@ public class SnssdkTextManager implements LoadListener {
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
     }
 
-    public List<SnssdkText> getmSnssdks(int type) {
+    public List<BaseSnssdkModel> getmSnssdks(int type) {
         mSnssdks.clear();
-        if(type == 0) {
-            mSnssdks.addAll(loadMore(0));
-        } else {
-            mSnssdks.addAll(loadMore(1));
-        }
+        mSnssdks.addAll(loadMore(type));
         return mSnssdks;
     }
 }

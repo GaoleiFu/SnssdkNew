@@ -1,6 +1,8 @@
 package com.devdroid.snssdknew.database;
 
 import java.util.List;
+
+import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
 
 /**
@@ -14,7 +16,7 @@ public class SnssdkTextDao {
         mSnssdkDatabaseHelper = new SnssdkDatabaseHelper(dataProvider);
     }
 
-    public List<SnssdkText> queryLockerInfo(int type) {
+    public List<BaseSnssdkModel> queryLockerInfo(int type) {
         return mSnssdkDatabaseHelper.querySnssdkInfo(type);
     }
 

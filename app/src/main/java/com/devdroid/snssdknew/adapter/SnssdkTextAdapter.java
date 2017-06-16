@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
+import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
 import java.util.List;
 
@@ -21,8 +22,8 @@ import java.util.List;
 public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.ViewHolder> implements OnDismissAndShareListener {
 
     private Context mContext;
-    private List<SnssdkText> snssdks;
-    public SnssdkTextAdapter(Context context, List<SnssdkText> snssdks){
+    private List<BaseSnssdkModel> snssdks;
+    public SnssdkTextAdapter(Context context, List<BaseSnssdkModel> snssdks){
         this.mContext = context;
         this.snssdks = snssdks;
     }
@@ -36,7 +37,8 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(snssdks != null && snssdks.size() > position) {
-            holder.mTextValue.setText(snssdks.get(position).getSnssdkContent());
+            SnssdkText snssdkText = (SnssdkText)snssdks.get(position);
+            holder.mTextValue.setText(snssdkText.getSnssdkContent());
             holder.mTextValue.requestFocus();
         }
     }
@@ -49,14 +51,15 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public void onItemDismiss(int position) {
-        LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdks.get(position));
+        SnssdkText snssdkText = (SnssdkText)snssdks.get(position);
+        LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
         snssdks.remove(position);
         notifyItemRemoved(position);
     }
 
     @Override
     public void onItemShare(int position,View currentView) {
-        SnssdkText snssdkText = snssdks.get(position);
+        SnssdkText snssdkText = (SnssdkText)snssdks.get(position);
         if(snssdkText.getIsCollection() == 1) {
             shareText(snssdkText.getSnssdkContent());
             notifyItemChanged(position);

@@ -20,6 +20,7 @@ import com.devdroid.snssdknew.base.BaseActivity;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
 import com.devdroid.snssdknew.manager.SnssdkTextManager;
+import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
@@ -46,7 +47,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SwitchCompat mSwNetSetting;
     private int mType = 0;
-    private List<SnssdkText> mSnssdkTexts;
+    private List<BaseSnssdkModel> mSnssdkTexts;
     private Toolbar mToolbar;
 
     @Override
@@ -133,6 +134,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             mToolbar.setTitle(getString(R.string.nav_string_text));
         } else if(type == 1){
             mToolbar.setTitle(getString(R.string.nav_string_collection));
+        } else if(type == 2){
+            mToolbar.setTitle(getString(R.string.nav_string_image));
         }
         this.mType = type;
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);

@@ -1,18 +1,16 @@
 package com.devdroid.snssdknew.model;
 
 /**
- * 文本Snssdk实体类
  * User:Gaolei  gurecn@gmail.com
- * Date:2016/10/10
+ * Date:2017/6/16
  * I'm glad to share my knowledge with you all.
  */
-public class SnssdkText extends BaseSnssdkModel {
-
+public class SnssdkImageModel extends BaseSnssdkModel {
 	private int id;
 	private int snssdkType;
-	private int isCollection;
 	private String snssdkContent;
-	public SnssdkText() {
+	private String imageUrl;
+	public SnssdkImageModel() {
 	}
 
 	public int getId() {
@@ -22,6 +20,7 @@ public class SnssdkText extends BaseSnssdkModel {
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public int getSnssdkType() {
 		return snssdkType;
 	}
@@ -30,19 +29,19 @@ public class SnssdkText extends BaseSnssdkModel {
 		this.snssdkType = snssdkType;
 	}
 
-	public int getIsCollection() {
-		return isCollection;
-	}
-
-	public void setIsCollection(int isCollection) {
-		this.isCollection = isCollection;
-	}
-
 	public String getSnssdkContent() {
 		return snssdkContent;
 	}
 
 	public void setSnssdkContent(String snssdkContent) {
 		this.snssdkContent = snssdkContent;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 }
