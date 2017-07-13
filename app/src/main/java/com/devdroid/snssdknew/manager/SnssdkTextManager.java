@@ -56,13 +56,13 @@ public class SnssdkTextManager implements LoadListener {
     /**
      * 下拉刷新
      */
-    public void freshMore(Context context) {
+    public void freshMore(Context context, int type) {
         if( LauncherModel.getInstance().getSharedPreferencesManager().getBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_OFFLINE_MODE, false)) {
             SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
             return;
         }
         if(checkPermissions(context)) {
-            mRemoteSettingManager.connectToServer(context);
+            mRemoteSettingManager.connectToServer(context, type);
         }
     }
 
@@ -70,7 +70,6 @@ public class SnssdkTextManager implements LoadListener {
         if (Build.VERSION.SDK_INT >= 23) {
             if(!(context instanceof Activity)) return false;
             int checkCallPhonePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE);
-//            boolean readPhoneStateable = LauncherModel.getInstance().getSharedPreferencesManager().getBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_READ_PHONE_STATE,false);
             if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_PHONE_STATE}, 10010);
                 int i = 0;
@@ -86,7 +85,6 @@ public class SnssdkTextManager implements LoadListener {
                         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
                         return false;
                     } else if (checkCallPhonePermission == PackageManager.PERMISSION_GRANTED) {
-//                        LauncherModel.getInstance().getSharedPreferencesManager().commitBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_READ_PHONE_STATE, true);
                         break;
                     }
                 } while (i++ < 25);

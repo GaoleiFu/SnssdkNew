@@ -5,7 +5,7 @@
               android:layout_height="match_parent"
     android:layout_margin="20dp">
     <TextView
-        android:id="@+id/tv_item_snssdk_image_content"
+        android:id="@+id/tv_item_snssdk_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"

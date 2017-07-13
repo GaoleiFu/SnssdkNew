@@ -17,5 +17,5 @@ public interface TaskProcessor {
 	 * 用于接收异步任务的结果，该方法在异步任务中调用，可以直接更新UI
 	 * @param result
 	 */
-	void processResult(JSONObject result);
+	void processResult(JSONObject result, int type);
 }

@@ -9,9 +9,9 @@ package com.devdroid.snssdknew.model;
 public class SnssdkText extends BaseSnssdkModel {
 
 	private int id;
-	private int snssdkType;
-	private int isCollection;
-	private String snssdkContent;
+	private int snssdkType;   //笑话类型   0:文字，2：图片
+	private int isCollection;   //是否收藏   0:未收藏
+	private String snssdkContent;   //内容或网址
 	public SnssdkText() {
 	}
 

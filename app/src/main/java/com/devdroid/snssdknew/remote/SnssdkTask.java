@@ -21,6 +21,7 @@ public class SnssdkTask extends AsyncTask<String ,Integer,JSONObject> {
 
 
 	private TaskProcessor mTaskProcessor;
+	private int mType;
 
 	public SnssdkTask(TaskProcessor taskProcessor){
 		this.mTaskProcessor = taskProcessor;
@@ -35,6 +36,7 @@ public class SnssdkTask extends AsyncTask<String ,Integer,JSONObject> {
 	protected JSONObject doInBackground(String... params) {
 		JSONObject ret = null;
 		byte[] bytes = HttpTool.get(params[0]);
+		mType = Integer.valueOf(params[1]);
 		if(bytes!=null){
 			try {
 				String str = new String(bytes, "UTF-8");
@@ -51,7 +53,7 @@ public class SnssdkTask extends AsyncTask<String ,Integer,JSONObject> {
 	@Override
 	protected void onPostExecute(JSONObject jsonObject) {
 		if(mTaskProcessor !=null){
-			mTaskProcessor.processResult(jsonObject);
+			mTaskProcessor.processResult(jsonObject, mType);
 		}
 	}
 }

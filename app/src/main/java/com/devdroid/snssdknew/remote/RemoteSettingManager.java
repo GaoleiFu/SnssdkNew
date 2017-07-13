@@ -1,56 +1,37 @@
 package com.devdroid.snssdknew.remote;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
-
-import com.devdroid.snssdknew.R;
+import android.text.TextUtils;
 import com.devdroid.snssdknew.application.LauncherModel;
-import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.constant.ApiConstant;
-import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
-import com.devdroid.snssdknew.manager.SharedPreferencesManager;
 import com.devdroid.snssdknew.model.SnssdkText;
-import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.utils.Machine;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.LinkedList;
 
-/**
- * Created by wangying on 16/3/30.
- */
 public class RemoteSettingManager {
-
-	private static final String LOG_TAG = "ScanModeManager";
-	LoadListener mLoadListener;
-
+	private LoadListener mLoadListener;
 	public RemoteSettingManager(LoadListener loadListener) {
 		mLoadListener = loadListener;
 	}
 
-	public void connectToServer(Context context) {
+	public void connectToServer(Context context, int type) {
 		String url = String.format(ApiConstant.GET_SNSSDK_URL_FRESH, Machine.getLocaldeviceId(context));
+		if(type == 2) {
+			url = String.format(ApiConstant.GET_SNSSDK_IMAGE_URL_FRESH, Machine.getLocaldeviceId(context));
+		}
 		TaskProcessor taskProcessor = new TaskProcessor(){
 			@Override
-			public void processResult(JSONObject result) {
-				parseDataAndCache(result);
+			public void processResult(JSONObject result, int type) {
+				parseDataAndCache(result, type);
 			}
 		};
 		SnssdkTask snssdkTask = new SnssdkTask(taskProcessor);
-		snssdkTask.execute(url);
+		snssdkTask.execute(url, type + "");
 	}
 
-	/**
-	 * @param result
-	 */
-	private void parseDataAndCache(final JSONObject result) {
+	private void parseDataAndCache(final JSONObject result, final int type) {
 		Runnable okRunnable = new Runnable() {
 			@Override
 			public void run() {
@@ -63,13 +44,34 @@ public class RemoteSettingManager {
 							for (int i = 0; i < jsonArrayData.length(); i++) {
 								JSONObject jsonGroup = jsonArrayData.optJSONObject(i).optJSONObject("group");
 								if (jsonGroup != null) {
-									String content = jsonGroup.optString("content");
-									if (!content.isEmpty()) {
-										SnssdkText snssdkText = new SnssdkText();
-										snssdkText.setSnssdkType(0);
-										snssdkText.setIsCollection(0);
-										snssdkText.setSnssdkContent(content);
-										snssdksContent.add(snssdkText);
+									if(type == 0) {
+										String content = jsonGroup.optString("content");
+										if (!content.isEmpty()) {
+											SnssdkText snssdkText = new SnssdkText();
+											snssdkText.setSnssdkType(type);
+											snssdkText.setIsCollection(0);
+											snssdkText.setSnssdkContent(content);
+											snssdksContent.add(snssdkText);
+										}
+									} else if(type == 2){
+										int mediaType = jsonGroup.optInt("media_type");
+										JSONObject largeCover;
+										if(mediaType < 3) {
+											largeCover = jsonGroup.optJSONObject("large_image");
+										} else if(mediaType == 3){
+											largeCover = jsonGroup.optJSONObject("medium_cover");
+										} else {
+											break;
+										}
+										JSONArray urlList = largeCover.optJSONArray("url_list");
+										String url = urlList.optJSONObject(0).optString("url");
+										if (!TextUtils.isEmpty(url)) {
+											SnssdkText snssdkText = new SnssdkText();
+											snssdkText.setSnssdkType(type);
+											snssdkText.setIsCollection(0);
+											snssdkText.setSnssdkContent(url);
+											snssdksContent.add(snssdkText);
+										}
 									}
 								}
 							}

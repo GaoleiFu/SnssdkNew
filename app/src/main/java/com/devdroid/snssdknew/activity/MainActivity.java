@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.support.design.widget.NavigationView;
@@ -21,7 +22,6 @@ import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
 import com.devdroid.snssdknew.manager.SnssdkTextManager;
 import com.devdroid.snssdknew.model.BaseSnssdkModel;
-import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
 import com.devdroid.snssdknew.utils.SimpleItemTouchHelperCallback;
@@ -37,7 +37,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
      * 事件监听
      */
     private final Object mEventSubscriber = new Object() {
-        //Snssdk下载完成事件
         @SuppressWarnings("unused")
         public void onEventMainThread(OnSnssdkLoadedEvent event) {
             mSnssdkAdapter.notifyDataSetChanged();
@@ -49,6 +48,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private int mType = 0;
     private List<BaseSnssdkModel> mSnssdkTexts;
     private Toolbar mToolbar;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,16 +91,14 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
         mSnssdkAdapter = new SnssdkTextAdapter(this, mSnssdkTexts);
-        recyclerView.setAdapter(mSnssdkAdapter);
+        mRecyclerView.setAdapter(mSnssdkAdapter);
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSnssdkAdapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(recyclerView);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -121,9 +119,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        if(mType == 0) {
+        if(mType != 1) {
             mSwipeRefreshLayout.setRefreshing(true);
-            SnssdkTextManager.getInstance().freshMore(this);
+            SnssdkTextManager.getInstance().freshMore(this, mType);
         } else {
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -132,10 +130,16 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     public void setSnssdkType(int type){
         if(type == 0){
             mToolbar.setTitle(getString(R.string.nav_string_text));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            mRecyclerView.setLayoutManager(layoutManager);
         } else if(type == 1){
             mToolbar.setTitle(getString(R.string.nav_string_collection));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            mRecyclerView.setLayoutManager(layoutManager);
         } else if(type == 2){
             mToolbar.setTitle(getString(R.string.nav_string_image));
+            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
         }
         this.mType = type;
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);

@@ -11,7 +11,6 @@ import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
 import com.devdroid.snssdknew.model.BaseSnssdkModel;
-import com.devdroid.snssdknew.model.SnssdkImageModel;
 import com.devdroid.snssdknew.model.SnssdkText;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == 1){
+        if(viewType == 2){
             View view = View.inflate(parent.getContext(), R.layout.item_snssdk_image, null);
             return new ViewHolderImage(view);
         } else {
@@ -43,26 +42,20 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public int getItemViewType(int position) {
-        BaseSnssdkModel snssdk = snssdks.get(position);
-        if(snssdk instanceof SnssdkText){
-            return 1;
-        } else if(snssdk instanceof SnssdkImageModel){
-            return 2;
-        }
-        return super.getItemViewType(position);
+        SnssdkText snssdk = (SnssdkText)snssdks.get(position);
+        return snssdk.getSnssdkType();
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(snssdks != null && snssdks.size() > position) {
-            BaseSnssdkModel snssdk = snssdks.get(position);
-            if(snssdk instanceof SnssdkText) {
-                holder.mTextValue.setText(((SnssdkText)snssdk).getSnssdkContent());
+            SnssdkText snssdk = (SnssdkText)snssdks.get(position);
+            if(snssdk.getSnssdkType() == 0) {
+                holder.mTextValue.setText((snssdk).getSnssdkContent());
                 holder.mTextValue.requestFocus();
-            } else  if(snssdk instanceof SnssdkImageModel) {
-                SnssdkImageModel snssdkImageModel = (SnssdkImageModel)snssdk;
+            } else  if(snssdk.getSnssdkType() == 1) {
                 ViewHolderImage viewHolderImage = (ViewHolderImage)holder;
-                viewHolderImage.mTextValue.setText(snssdkImageModel.getSnssdkContent());
+                viewHolderImage.mTextValue.setText(snssdk.getSnssdkContent());
             }
         }
     }
@@ -99,7 +92,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         TextView mTextValue;
         ViewHolder(View itemView) {
             super(itemView);
-            mTextValue = (TextView)itemView.findViewById(R.id.item_snssdk_text_value);
+            mTextValue = (TextView)itemView.findViewById(R.id.tv_item_snssdk_content);
         }
     }
 
