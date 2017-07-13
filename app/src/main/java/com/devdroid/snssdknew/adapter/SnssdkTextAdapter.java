@@ -2,11 +2,19 @@ package com.devdroid.snssdknew.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
@@ -24,9 +32,15 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     private Context mContext;
     private List<BaseSnssdkModel> snssdks;
+    private final int mScreenWidth;
+
     public SnssdkTextAdapter(Context context, List<BaseSnssdkModel> snssdks){
         this.mContext = context;
         this.snssdks = snssdks;
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display d = wm.getDefaultDisplay();
+        mScreenWidth = d.getWidth();
     }
 
     @Override
@@ -53,9 +67,25 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
             if(snssdk.getSnssdkType() == 0) {
                 holder.mTextValue.setText((snssdk).getSnssdkContent());
                 holder.mTextValue.requestFocus();
-            } else  if(snssdk.getSnssdkType() == 1) {
-                ViewHolderImage viewHolderImage = (ViewHolderImage)holder;
-                viewHolderImage.mTextValue.setText(snssdk.getSnssdkContent());
+            } else if(snssdk.getSnssdkType() == 2) {
+                final ViewHolderImage viewHolderImage = (ViewHolderImage)holder;
+                String url = snssdk.getSnssdkContent();
+                if(url.endsWith("gif")) {
+                    Glide.with(mContext).load(snssdk.getSnssdkContent()).asGif().placeholder(R.mipmap.ic_launcher).crossFade().into(viewHolderImage.mImageView);
+                } else {
+                    Glide.with(mContext).load(snssdk.getSnssdkContent()).asBitmap().placeholder(R.mipmap.ic_launcher).centerCrop().into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            int imageWidth = resource.getWidth();
+                            int imageHeight = resource.getHeight();
+                            int height = mScreenWidth / 2 * imageHeight / imageWidth;
+                            ViewGroup.LayoutParams para = viewHolderImage.mImageView.getLayoutParams();
+                            para.height = height;
+                            para.width = mScreenWidth / 2;
+                            viewHolderImage.mImageView.setImageBitmap(resource);
+                        }
+                    });
+                }
             }
         }
     }

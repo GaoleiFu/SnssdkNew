@@ -128,6 +128,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     public void setSnssdkType(int type){
+        mType = type;
         if(type == 0){
             mToolbar.setTitle(getString(R.string.nav_string_text));
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);

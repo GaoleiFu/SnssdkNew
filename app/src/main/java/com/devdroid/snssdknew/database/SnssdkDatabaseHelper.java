@@ -19,10 +19,12 @@ class SnssdkDatabaseHelper {
     List<BaseSnssdkModel> querySnssdkInfo(int type) {
         List<BaseSnssdkModel> list = new ArrayList<>();
         Cursor cursor;
-        if(type < 2) {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=?", new String[]{"" + type}, SnssdkTextTable.ID + " DESC");
+        if(type == 2) {
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"2"}, SnssdkTextTable.ID + " DESC");
+        } else if(type == 1) {
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"" + type, "0"}, SnssdkTextTable.ID + " DESC");
         } else {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"" + type}, SnssdkTextTable.ID + " DESC");
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"0", "0"}, SnssdkTextTable.ID + " DESC");
         }
         if (null != cursor) {
             try {

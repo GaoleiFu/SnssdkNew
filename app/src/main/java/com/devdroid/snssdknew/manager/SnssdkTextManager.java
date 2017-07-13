@@ -29,6 +29,7 @@ public class SnssdkTextManager implements LoadListener {
     private static SnssdkTextManager sInstance;
     private List<BaseSnssdkModel> mSnssdks;
     private RemoteSettingManager mRemoteSettingManager;
+    private int mType;
 
     private SnssdkTextManager() {
         mSnssdks = new ArrayList<>();
@@ -97,6 +98,7 @@ public class SnssdkTextManager implements LoadListener {
      * 上拉数据库加载
      */
     private List<BaseSnssdkModel> loadMore(int type) {
+        mType = type;
         return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
     }
 
@@ -106,7 +108,7 @@ public class SnssdkTextManager implements LoadListener {
     @Override
     public void loadLoaded(List<SnssdkText> snssdks) {
         mSnssdks.clear();
-        mSnssdks.addAll(loadMore(0));
+        mSnssdks.addAll(loadMore(mType));
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
     }
 
