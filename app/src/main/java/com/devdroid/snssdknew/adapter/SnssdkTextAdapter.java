@@ -18,8 +18,10 @@ import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
+import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
 import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
+
 import java.util.List;
 
 /**
@@ -33,6 +35,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
     private Context mContext;
     private List<BaseSnssdkModel> snssdks;
     private final int mScreenWidth;
+    private OnRecyclerItemClickListener listener;
 
     public SnssdkTextAdapter(Context context, List<BaseSnssdkModel> snssdks){
         this.mContext = context;
@@ -41,6 +44,10 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display d = wm.getDefaultDisplay();
         mScreenWidth = d.getWidth();
+    }
+
+    public void setItemClickListener(OnRecyclerItemClickListener itemClickListener){
+        this.listener = itemClickListener;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         if(snssdks != null && snssdks.size() > position) {
             SnssdkText snssdk = (SnssdkText)snssdks.get(position);
             if(snssdk.getSnssdkType() == 0) {
@@ -86,6 +93,15 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
                         }
                     });
                 }
+                if(listener != null){
+                    viewHolderImage.mImageView.setTag(snssdk);
+                    viewHolderImage.mImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                                listener.onItemClick(SnssdkTextAdapter.this, v, position);
+                            }
+                        });
+                 }
             }
         }
     }
