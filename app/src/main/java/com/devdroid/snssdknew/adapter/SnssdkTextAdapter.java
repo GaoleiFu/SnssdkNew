@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -18,10 +17,8 @@ import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
-import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
 import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
-
 import java.util.List;
 
 /**
@@ -35,20 +32,15 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
     private Context mContext;
     private List<BaseSnssdkModel> snssdks;
     private final int mScreenWidth;
-    private OnRecyclerItemClickListener listener;
 
     public SnssdkTextAdapter(Context context, List<BaseSnssdkModel> snssdks){
         this.mContext = context;
         this.snssdks = snssdks;
-
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display d = wm.getDefaultDisplay();
         mScreenWidth = d.getWidth();
     }
 
-    public void setItemClickListener(OnRecyclerItemClickListener itemClickListener){
-        this.listener = itemClickListener;
-    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -93,15 +85,6 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
                         }
                     });
                 }
-                if(listener != null){
-                    viewHolderImage.mImageView.setTag(snssdk);
-                    viewHolderImage.mImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                                listener.onItemClick(SnssdkTextAdapter.this, v, position);
-                            }
-                        });
-                 }
             }
         }
     }
@@ -142,7 +125,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         }
     }
 
-    class ViewHolderImage extends ViewHolder{
+    private class ViewHolderImage extends ViewHolder{
         ImageView mImageView;
         ViewHolderImage(View itemView) {
             super(itemView);

@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * 主界面
  */
-public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, OnRecyclerItemClickListener {
+public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     private SnssdkTextAdapter mSnssdkAdapter;
     /**
      * 事件监听
@@ -98,7 +98,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
         mSnssdkAdapter = new SnssdkTextAdapter(this, mSnssdkTexts);
-        mSnssdkAdapter.setItemClickListener(this);
         mRecyclerView.setAdapter(mSnssdkAdapter);
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSnssdkAdapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
@@ -149,10 +148,5 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         this.mType = type;
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
         mSnssdkAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onItemClick(RecyclerView.Adapter parent, View v, int position) {
-
     }
 }
