@@ -18,8 +18,5 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <!-- 标题的字体风格 -->
-    <style name="common_title_main_text">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
 
 </resources>

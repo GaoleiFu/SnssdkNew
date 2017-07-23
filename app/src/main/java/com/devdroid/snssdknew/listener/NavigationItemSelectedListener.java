@@ -37,8 +37,11 @@ public class NavigationItemSelectedListener  implements NavigationView.OnNavigat
             case R.id.nav_gallery :
                 mAppCompatActivity.setSnssdkType(2);
                 break;
-            case R.id.nav_collection :
+            case R.id.nav_collection_text :
                 mAppCompatActivity.setSnssdkType(1);
+                break;
+            case R.id.nav_collection_image :
+                mAppCompatActivity.setSnssdkType(3);
                 break;
             case R.id.nav_share :
                 shareText();

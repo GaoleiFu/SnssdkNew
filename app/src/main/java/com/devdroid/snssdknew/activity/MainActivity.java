@@ -137,11 +137,15 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             mRecyclerView.setLayoutManager(layoutManager);
         } else if(type == 1){
-            mToolbar.setTitle(getString(R.string.nav_string_collection));
+            mToolbar.setTitle(getString(R.string.nav_string_collection_text));
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             mRecyclerView.setLayoutManager(layoutManager);
         } else if(type == 2){
             mToolbar.setTitle(getString(R.string.nav_string_image));
+            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
+        } else if(type == 3){
+            mToolbar.setTitle(getString(R.string.nav_string_collection_image));
             StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(gridLayoutManager);
         }
