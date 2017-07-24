@@ -157,7 +157,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     public void onItemClick(RecyclerView.Adapter parent, View v, int position, int showType) {
         if(showType == 2) {
-            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(gridLayoutManager);
         } else {
             StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
