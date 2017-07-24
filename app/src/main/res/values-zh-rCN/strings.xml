@@ -30,4 +30,5 @@
     <string name="share_app_text">这里有一个很好玩的应用，大家可以体验一下。</string>
     <string name="nav_string_collection_image">图片收藏</string>
     <string name="nav_string_collection_text">笑话收藏</string>
+    <string name="action_resave">还原</string>
 </resources>
