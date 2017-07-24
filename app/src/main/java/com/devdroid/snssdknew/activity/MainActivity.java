@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,8 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
@@ -38,8 +37,6 @@ import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
 import com.devdroid.snssdknew.utils.SimpleItemTouchHelperCallback;
-import com.devdroid.snssdknew.utils.log.Logger;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,6 +64,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private List<SnssdkText> mSnssdkTexts;
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
+    private SnssdkText oldSnssdkText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +85,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         if(item.getItemId()==0 || item.getItemId() == android.R.id.home){
             finish();
             return true;
-        } else if(item.getItemId() == R.id.action_resave){
-
+        } else if(item.getItemId() == R.id.action_resave && oldSnssdkText != null){
+            LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(oldSnssdkText);
+            Snackbar.make(mRecyclerView, "内容已还原", Snackbar.LENGTH_SHORT).show();
+            oldSnssdkText = null;
+        } else {
+            Snackbar.make(mRecyclerView, "未缓存数据", Snackbar.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -204,6 +206,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     public void onItemDismiss(int position) {
         SnssdkText snssdkText = mSnssdkTexts.get(position);
+        oldSnssdkText = snssdkText;
         LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
         mSnssdkTexts.remove(position);
         mSnssdkAdapter.notifyItemRemoved(position);

@@ -24,7 +24,9 @@ public class SnssdkTextDao {
         mSnssdkDatabaseHelper.insertSnssdkItem(insertList);
     }
 
-
+    public void insertSnssdkItem(SnssdkText snssdkText) {
+        mSnssdkDatabaseHelper.insertSnssdkItem(snssdkText);
+    }
     public void deleteSnssdkItem(SnssdkText snssdkText) {
         mSnssdkDatabaseHelper.deleteSnssdkItem(snssdkText);
     }

@@ -70,6 +70,20 @@ class SnssdkDatabaseHelper {
         }
         return false;
     }
+    void insertSnssdkItem(SnssdkText snssdkText) {
+        ArrayList<InsertParams> list = new ArrayList<>();
+        if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + snssdkText + "'")) {
+            ContentValues values = new ContentValues();
+            values.put(SnssdkTextTable.COMPONENTNAME,snssdkText.getSnssdkContent());
+            values.put(SnssdkTextTable.SNSSDK_TYPE,snssdkText.getSnssdkType());
+            values.put(SnssdkTextTable.SNSSDK_COLLECTION,snssdkText.getIsCollection());
+            InsertParams insert = new InsertParams(SnssdkTextTable.TABLE_NAME, values);
+            list.add(insert);
+        }
+        if (!list.isEmpty()) {
+            mHelper.insert(list);
+        }
+    }
     void insertSnssdkItem(List<SnssdkText> insertSnssdkList) {
         ArrayList<InsertParams> list = new ArrayList<>();
         for (SnssdkText snssdkText : insertSnssdkList) {
