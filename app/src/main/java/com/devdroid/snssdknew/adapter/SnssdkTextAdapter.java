@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutionException;
  * Date:2016/10/10
  * I'm glad to share my knowledge with you all.
  */
-public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.ViewHolder> implements OnDismissAndShareListener {
+public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.ViewHolder> {
 
     private Context mContext;
     private List<SnssdkText> snssdks;
@@ -119,33 +119,6 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         return snssdks.size();
     }
 
-    @Override
-    public void onItemDismiss(int position) {
-        SnssdkText snssdkText = snssdks.get(position);
-        LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
-        snssdks.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    @Override
-    public void onItemShare(int position,View currentView) {
-        SnssdkText snssdkText = snssdks.get(position);
-        if(snssdkText.getIsCollection() == 1) {
-            if(snssdkText.getSnssdkType() == 2) {  //分享图片
-                shareImage(snssdkText.getSnssdkContent());
-                notifyItemChanged(position);
-            } else {
-                shareText(snssdkText.getSnssdkContent());
-                notifyItemChanged(position);
-            }
-        } else {
-            snssdkText.setIsCollection(1);
-            LauncherModel.getInstance().getSnssdkTextDao().updateSnssdkItem(snssdkText);
-            snssdks.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
     class ViewHolder extends RecyclerView.ViewHolder{
         TextView mTextValue;
         ViewHolder(View itemView) {
@@ -160,65 +133,6 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
             super(itemView);
             mImageView = (ImageView)itemView.findViewById(R.id.iv_item_snssdk_image_image);
         }
-    }
-
-    private void shareText(String text) {
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TITLE,text);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
-        shareIntent.setType("text/plain");
-        mContext.startActivity(Intent.createChooser(shareIntent, "分享到"));
-    }
-
-    private void shareImage(final String url) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent();
-                try {
-                    Bitmap bitmap = Glide.with(mContext).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
-                    String[] filePaths = url.split("/");
-                    String fileName = filePaths[filePaths.length - 1];
-                    File cacheFile =  saveImageFile(bitmap, fileName);
-                    intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cacheFile));
-                    intent.setType("image/*");
-                    intent.putExtra("sms_body", url);
-                    mContext.startActivity(intent);
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
-
-    private File saveImageFile(Bitmap bmp, String fileName) {
-        // 首先保存图片
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk"  + File.separator + "share";//注意小米手机必须这样获得public绝对路径
-        File file = new File(filePath ,fileName);
-        FileOutputStream fos = null;
-        try {
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-            fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return file;
     }
 
 }

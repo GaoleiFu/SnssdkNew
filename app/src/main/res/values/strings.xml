@@ -38,4 +38,5 @@
     <string name="string_no_phone_state">Unable to get phone status information, can not get the data</string>
     <string name="share_app_text">Here is a very fun application, we can experience.</string>
 
+    <string name="action_resave">Resave</string>
 </resources>
