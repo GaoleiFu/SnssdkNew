@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
@@ -22,9 +21,7 @@ import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
 import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -162,20 +159,16 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
             public void run() {
                 Intent intent = new Intent();
                 try {
-
-                    Bitmap bitmap = Glide.with(mContext)
-                            .load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                    Bitmap bitmap = Glide.with(mContext).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
                     String[] filePaths = url.split("/");
                     String fileName = filePaths[filePaths.length - 1];
                     File cacheFile =  saveImageFile(bitmap, fileName);
                     intent.setAction(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cacheFile));
                     intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_STREAM, cacheFile);
-                    intent.putExtra("Kdescription", url);
+                    intent.putExtra("sms_body", url);
                     mContext.startActivity(intent);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }
@@ -183,20 +176,19 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         thread.start();
     }
 
-    public File saveImageFile(Bitmap bmp, String fileName) {
+    private File saveImageFile(Bitmap bmp, String fileName) {
         // 首先保存图片
-        String file = Environment.getExternalStorageDirectory().getAbsolutePath();//注意小米手机必须这样获得public绝对路径
-        File appDir = new File(file ,fileName);
-        if (!appDir.exists()) {
-            appDir.mkdirs();
-        }
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk"  + File.separator + "share";//注意小米手机必须这样获得public绝对路径
+        File file = new File(filePath ,fileName);
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(appDir);
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            fos = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -208,7 +200,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
                 e.printStackTrace();
             }
         }
-        return appDir;
+        return file;
     }
 
 }
