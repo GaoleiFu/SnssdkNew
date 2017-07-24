@@ -19,7 +19,7 @@ import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
-import com.devdroid.snssdknew.model.BaseSnssdkModel;
+import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
 import com.devdroid.snssdknew.model.SnssdkText;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,10 +36,12 @@ import java.util.concurrent.ExecutionException;
 public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.ViewHolder> implements OnDismissAndShareListener {
 
     private Context mContext;
-    private List<BaseSnssdkModel> snssdks;
+    private List<SnssdkText> snssdks;
     private final int mScreenWidth;
+    private OnRecyclerItemClickListener listener;
+    private int mShowColumn = 2;
 
-    public SnssdkTextAdapter(Context context, List<BaseSnssdkModel> snssdks){
+    public SnssdkTextAdapter(Context context, List<SnssdkText> snssdks){
         this.mContext = context;
         this.snssdks = snssdks;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -47,6 +49,13 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
         mScreenWidth = d.getWidth();
     }
 
+    public void setItemClickListener(OnRecyclerItemClickListener itemClickListener){
+        this.listener = itemClickListener;
+    }
+
+    public void setShowColumnChanged(){
+        this.mShowColumn = 2 /this.mShowColumn;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -61,14 +70,14 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public int getItemViewType(int position) {
-        SnssdkText snssdk = (SnssdkText)snssdks.get(position);
+        SnssdkText snssdk = snssdks.get(position);
         return snssdk.getSnssdkType();
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         if(snssdks != null && snssdks.size() > position) {
-            SnssdkText snssdk = (SnssdkText)snssdks.get(position);
+            SnssdkText snssdk = snssdks.get(position);
             if(snssdk.getSnssdkType() == 0) {
                 holder.mTextValue.setText((snssdk).getSnssdkContent());
                 holder.mTextValue.requestFocus();
@@ -83,11 +92,20 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                             int imageWidth = resource.getWidth();
                             int imageHeight = resource.getHeight();
-                            int height = mScreenWidth / 2 * imageHeight / imageWidth;
+                            int height = mScreenWidth / mShowColumn * imageHeight / imageWidth;
                             ViewGroup.LayoutParams para = viewHolderImage.mImageView.getLayoutParams();
                             para.height = height;
-                            para.width = mScreenWidth / 2;
+                            para.width = mScreenWidth / mShowColumn;
                             viewHolderImage.mImageView.setImageBitmap(resource);
+                        }
+                    });
+                }
+                if(listener != null){
+                    viewHolderImage.mImageView.setTag(snssdk);
+                    viewHolderImage.mImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            listener.onItemClick(SnssdkTextAdapter.this, v, position, mShowColumn);
                         }
                     });
                 }
@@ -103,7 +121,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public void onItemDismiss(int position) {
-        SnssdkText snssdkText = (SnssdkText)snssdks.get(position);
+        SnssdkText snssdkText = snssdks.get(position);
         LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
         snssdks.remove(position);
         notifyItemRemoved(position);
@@ -111,7 +129,7 @@ public class SnssdkTextAdapter extends RecyclerView.Adapter<SnssdkTextAdapter.Vi
 
     @Override
     public void onItemShare(int position,View currentView) {
-        SnssdkText snssdkText = (SnssdkText)snssdks.get(position);
+        SnssdkText snssdkText = snssdks.get(position);
         if(snssdkText.getIsCollection() == 1) {
             if(snssdkText.getSnssdkType() == 2) {  //分享图片
                 shareImage(snssdkText.getSnssdkContent());

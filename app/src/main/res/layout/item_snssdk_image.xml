@@ -6,6 +6,6 @@
     <ImageView
         android:id="@+id/iv_item_snssdk_image_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scaleType="fitCenter"/>
 </LinearLayout>

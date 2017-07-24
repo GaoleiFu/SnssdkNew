@@ -16,8 +16,8 @@ class SnssdkDatabaseHelper {
     /**
      * 查询当前笑话信息
      */
-    List<BaseSnssdkModel> querySnssdkInfo(int type) {
-        List<BaseSnssdkModel> list = new ArrayList<>();
+    List<SnssdkText> querySnssdkInfo(int type) {
+        List<SnssdkText> list = new ArrayList<>();
         Cursor cursor;
         if(type == 3) {
             cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"1", "2"}, SnssdkTextTable.ID + " DESC");

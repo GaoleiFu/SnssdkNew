@@ -9,5 +9,5 @@ import android.view.View;
  */
 
 public interface OnRecyclerItemClickListener {
-    void onItemClick(RecyclerView.Adapter parent, View v, int position);
+    void onItemClick(RecyclerView.Adapter parent, View v, int position, int showType);
 }

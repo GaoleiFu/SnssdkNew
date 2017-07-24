@@ -27,7 +27,7 @@ import com.devdroid.snssdknew.remote.RemoteSettingManager;
 public class SnssdkTextManager implements LoadListener {
 
     private static SnssdkTextManager sInstance;
-    private List<BaseSnssdkModel> mSnssdks;
+    private List<SnssdkText> mSnssdks;
     private RemoteSettingManager mRemoteSettingManager;
     private int mType;
 
@@ -97,7 +97,7 @@ public class SnssdkTextManager implements LoadListener {
     /**
      * 上拉数据库加载
      */
-    private List<BaseSnssdkModel> loadMore(int type) {
+    private List<SnssdkText> loadMore(int type) {
         mType = type;
         return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
     }
@@ -112,7 +112,7 @@ public class SnssdkTextManager implements LoadListener {
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
     }
 
-    public List<BaseSnssdkModel> getmSnssdks(int type) {
+    public List<SnssdkText> getmSnssdks(int type) {
         mSnssdks.clear();
         mSnssdks.addAll(loadMore(type));
         return mSnssdks;
