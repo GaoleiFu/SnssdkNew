@@ -65,6 +65,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
     private SnssdkText oldSnssdkText;
+    private Menu mMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        mMenuItem = menu;
         return true;
     }
     @Override
@@ -89,6 +91,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(oldSnssdkText);
             Snackbar.make(mRecyclerView, "内容已还原", Snackbar.LENGTH_SHORT).show();
             oldSnssdkText = null;
+            item.setVisible(false);
         } else {
             Snackbar.make(mRecyclerView, "未缓存数据", Snackbar.LENGTH_SHORT).show();
         }
@@ -212,6 +215,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
         mSnssdkTexts.remove(position);
         mSnssdkAdapter.notifyItemRemoved(position);
+        mMenuItem.findItem(R.id.action_resave).setVisible(true);
     }
 
     @Override
