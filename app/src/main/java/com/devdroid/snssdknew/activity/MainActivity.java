@@ -130,6 +130,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
         mSnssdkAdapter = new SnssdkTextAdapter(this, mSnssdkTexts);
         mSnssdkAdapter.setItemClickListener(this);

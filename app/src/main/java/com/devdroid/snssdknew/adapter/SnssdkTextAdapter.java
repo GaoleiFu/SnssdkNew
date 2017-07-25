@@ -1,10 +1,7 @@
 package com.devdroid.snssdknew.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.View;
@@ -17,15 +14,9 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
-import com.devdroid.snssdknew.application.LauncherModel;
-import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
 import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
 import com.devdroid.snssdknew.model.SnssdkText;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 主界面文本Snssdk的适配器
