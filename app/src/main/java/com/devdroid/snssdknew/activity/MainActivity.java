@@ -250,17 +250,24 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent();
+                final Intent intent = new Intent();
                 try {
-                    Bitmap bitmap = Glide.with(MainActivity.this).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                    final Bitmap bitmap = Glide.with(MainActivity.this).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
                     String[] filePaths = url.split("/");
-                    String fileName = filePaths[filePaths.length - 1];
-                    File cacheFile =  saveImageFile(bitmap, fileName);
-                    intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cacheFile));
-                    intent.setType("image/*");
-                    intent.putExtra("sms_body", url);
-                    MainActivity.this.startActivity(intent);
+                    final String fileName = filePaths[filePaths.length - 1];
+
+                    mRecyclerView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            File cacheFile =  saveImageFile(bitmap, fileName);
+                            intent.setAction(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cacheFile));
+                            intent.setType("image/*");
+                            intent.putExtra("sms_body", url);
+                            MainActivity.this.startActivity(intent);
+                        }
+                    }, 100);
+
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
@@ -270,13 +277,19 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private File saveImageFile(Bitmap bmp, String fileName) {
+        String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk" + File.separator + "share";
+        File filePath = new File(imagePath);
+        if (!filePath.isDirectory()) {
+            boolean mkSuccess = filePath.mkdirs();
+            if (!mkSuccess) {
+                filePath.mkdirs();
+            }
+        }
         // 首先保存图片
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk"  + File.separator + "share";//注意小米手机必须这样获得public绝对路径
         File file = new File(filePath ,fileName);
         FileOutputStream fos = null;
         try {
             if (!file.exists()) {
-                file.getParentFile().mkdirs();
                 file.createNewFile();
             }
             fos = new FileOutputStream(file);

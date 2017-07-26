@@ -38,14 +38,19 @@
             android:label="@string/nav_string_text"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data
                 android:name="android.service.chooser.chooser_target_service"
                 android:value=".SampleChooserTargetService" />
+        </activity>
+        <activity android:name=".activity.SplashActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".base.BaseActivity"/>
         <activity android:name=".activity.FeedbackActivity"

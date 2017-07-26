@@ -2,21 +2,10 @@ package com.devdroid.snssdknew.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
-
-import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
-import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.remote.LoadListener;
@@ -62,37 +51,9 @@ public class SnssdkTextManager implements LoadListener {
             SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
             return;
         }
-        if(checkPermissions(context)) {
-            mRemoteSettingManager.connectToServer(context, type);
-        }
+        mRemoteSettingManager.connectToServer(context, type);
     }
 
-    private boolean checkPermissions(Context context) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if(!(context instanceof Activity)) return false;
-            int checkCallPhonePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE);
-            if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_PHONE_STATE}, 10010);
-                int i = 0;
-                do {
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    checkCallPhonePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE);
-                    if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED && i >= 25) {
-                        Toast.makeText(context, context.getResources().getString(R.string.string_no_phone_state), Toast.LENGTH_SHORT).show();
-                        SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
-                        return false;
-                    } else if (checkCallPhonePermission == PackageManager.PERMISSION_GRANTED) {
-                        break;
-                    }
-                } while (i++ < 25);
-            }
-        }
-        return true;
-    }
 
     /**
      * 上拉数据库加载
