@@ -28,6 +28,7 @@ import com.devdroid.snssdknew.adapter.SnssdkTextAdapter;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.base.BaseActivity;
+import com.devdroid.snssdknew.eventbus.OnBitmapGetFinishEvent;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
 import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
@@ -56,6 +57,16 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         public void onEventMainThread(OnSnssdkLoadedEvent event) {
             mSnssdkAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
+        }
+        @SuppressWarnings("unused")
+        public void onEventMainThread(OnBitmapGetFinishEvent event) {
+            File cacheFile =  saveImageFile(event.getBitmap(), event.getFileName());
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cacheFile));
+            intent.setType("image/*");
+            intent.putExtra("sms_body", event.getFileName());
+            MainActivity.this.startActivity(intent);
         }
     };
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -250,24 +261,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                final Intent intent = new Intent();
                 try {
                     final Bitmap bitmap = Glide.with(MainActivity.this).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
-                    String[] filePaths = url.split("/");
-                    final String fileName = filePaths[filePaths.length - 1];
-
-                    mRecyclerView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            File cacheFile =  saveImageFile(bitmap, fileName);
-                            intent.setAction(Intent.ACTION_SEND);
-                            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cacheFile));
-                            intent.setType("image/*");
-                            intent.putExtra("sms_body", url);
-                            MainActivity.this.startActivity(intent);
-                        }
-                    }, 100);
-
+                    String[] filePaths = url.split("/|\\.");
+                    final String fileName = filePaths[filePaths.length - 2] + "jpg";
+                    SnssdknewApplication.getGlobalEventBus().post(new OnBitmapGetFinishEvent(bitmap, fileName));
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
@@ -280,10 +278,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk" + File.separator + "share";
         File filePath = new File(imagePath);
         if (!filePath.isDirectory()) {
-            boolean mkSuccess = filePath.mkdirs();
-            if (!mkSuccess) {
-                filePath.mkdirs();
-            }
+            filePath.mkdirs();
         }
         // 首先保存图片
         File file = new File(filePath ,fileName);
@@ -291,10 +286,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         try {
             if (!file.exists()) {
                 file.createNewFile();
+                fos = new FileOutputStream(file);
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
             }
-            fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
