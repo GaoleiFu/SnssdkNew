@@ -264,7 +264,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 try {
                     final Bitmap bitmap = Glide.with(MainActivity.this).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
                     String[] filePaths = url.split("/|\\.");
-                    final String fileName = filePaths[filePaths.length - 2] + "jpg";
+                    final String fileName = filePaths[filePaths.length - 2] + ".jpg";
                     SnssdknewApplication.getGlobalEventBus().post(new OnBitmapGetFinishEvent(bitmap, fileName));
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
