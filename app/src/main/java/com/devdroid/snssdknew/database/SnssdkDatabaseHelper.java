@@ -7,8 +7,10 @@ import android.database.Cursor;
 
 import com.devdroid.snssdknew.model.BaseSnssdkModel;
 import com.devdroid.snssdknew.model.SnssdkText;
+import com.devdroid.snssdknew.utils.log.Logger;
 
 class SnssdkDatabaseHelper {
+    private static final int PAGE_NUM = 20;
 	private BaseDataProvider mHelper = null;
 	SnssdkDatabaseHelper(BaseDataProvider dataProvider) {
 		mHelper = dataProvider;
@@ -16,17 +18,18 @@ class SnssdkDatabaseHelper {
     /**
      * 查询当前笑话信息
      */
-    List<SnssdkText> querySnssdkInfo(int type) {
+    List<SnssdkText> querySnssdkInfo(int type, int page) {
         List<SnssdkText> list = new ArrayList<>();
+        Logger.d("111111111111111", "page：" + page);
         Cursor cursor;
         if(type == 3) {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"1", "2"}, SnssdkTextTable.ID + " DESC");
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"1", "2"}, SnssdkTextTable.ID + " DESC limit " + PAGE_NUM  + " offset " + (page * PAGE_NUM));
         } else if(type == 2) {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"0", "2"}, SnssdkTextTable.ID + " DESC");
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"0", "2"}, SnssdkTextTable.ID + " DESC limit " + PAGE_NUM  + " offset " + (page * PAGE_NUM));
         } else if(type == 1) {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"" + type, "0"}, SnssdkTextTable.ID + " DESC");
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"" + type, "0"}, SnssdkTextTable.ID + " DESC limit " + PAGE_NUM  + " offset " + (page * PAGE_NUM));
         }  else {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"0", "0"}, SnssdkTextTable.ID + " DESC");
+            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"0", "0"}, SnssdkTextTable.ID + " DESC limit " + PAGE_NUM  + " offset " + (page * PAGE_NUM));
         }
         if (null != cursor) {
             try {

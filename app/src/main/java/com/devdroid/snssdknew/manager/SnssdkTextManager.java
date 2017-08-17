@@ -19,6 +19,7 @@ public class SnssdkTextManager implements LoadListener {
     private List<SnssdkText> mSnssdks;
     private RemoteSettingManager mRemoteSettingManager;
     private int mType;
+    private int mCurrentPage;  //当前显示页
 
     private SnssdkTextManager() {
         mSnssdks = new ArrayList<>();
@@ -59,8 +60,11 @@ public class SnssdkTextManager implements LoadListener {
      * 上拉数据库加载
      */
     private List<SnssdkText> loadMore(int type) {
-        mType = type;
-        return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
+        if(mType != type){
+            mCurrentPage = 0;
+            mType = type;
+        }
+        return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type, mCurrentPage++ -1);
     }
 
     /**
@@ -68,14 +72,20 @@ public class SnssdkTextManager implements LoadListener {
      */
     @Override
     public void loadLoaded(List<SnssdkText> snssdks) {
-        mSnssdks.clear();
-        mSnssdks.addAll(loadMore(mType));
+        if(mCurrentPage > 1){
+            mSnssdks.clear();
+            mSnssdks.addAll(LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(mType, mCurrentPage-- -1));
+        } else {
+            mSnssdks.clear();
+            mSnssdks.addAll(loadMore(mType));
+        }
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
     }
 
     public List<SnssdkText> getmSnssdks(int type) {
         mSnssdks.clear();
         mSnssdks.addAll(loadMore(type));
+        SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
         return mSnssdks;
     }
 }

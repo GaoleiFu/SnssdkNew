@@ -57,6 +57,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         public void onEventMainThread(OnSnssdkLoadedEvent event) {
             mSnssdkAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
+            mRecyclerView.scrollToPosition(0);
         }
         @SuppressWarnings("unused")
         public void onEventMainThread(OnBitmapGetFinishEvent event) {
@@ -77,6 +78,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private RecyclerView mRecyclerView;
     private SnssdkText oldSnssdkText;
     private Menu mMenuItem;
+    private int mLastVisibleItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +146,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
         mSnssdkAdapter = new SnssdkTextAdapter(this, mSnssdkTexts);
@@ -153,6 +155,23 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(this);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && mLastVisibleItem + 1 == mSnssdkAdapter.getItemCount()) {
+                    SnssdkTextManager.getInstance().getmSnssdks(mType);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                mLastVisibleItem = layoutManager.findLastVisibleItemPosition();
+            }
+
+        });
     }
 
     @Override
