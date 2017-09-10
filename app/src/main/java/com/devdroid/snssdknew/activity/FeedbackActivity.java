@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -26,9 +27,7 @@ import com.devdroid.snssdknew.utils.NetworkUtil;
  */
 
 public class FeedbackActivity extends BaseActivity {
-    private String mDevinfo; //设备信息及型号
     private EditText mContainer; //正文
-    private TextView mNotice; //最下面的提示
     private ImageView mImageView; //下拉框箭头
     private LinearLayout mMenuCommon; //下拉框
     private TextView mProblem; //下拉框文本
@@ -48,7 +47,7 @@ public class FeedbackActivity extends BaseActivity {
         }
         mContainer = (EditText)findViewById(R.id.container_setting_feedback);
         mSelect = (TextView)findViewById(R.id.setting_feedback_menu_select);
-        mNotice = (TextView)findViewById(R.id.notice_setting_feedback);
+        TextView tvNotice = (TextView) findViewById(R.id.notice_setting_feedback);
         mImageView = (ImageView)findViewById(R.id.menu_imageview);
         mMenuCommon = (LinearLayout)findViewById(R.id.setting_feedback_menu);
         mMenuCommon.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +70,7 @@ public class FeedbackActivity extends BaseActivity {
         mContainer.setFocusable(true);
         mContainer.setFocusableInTouchMode(true);
         mContainer.requestFocus();
-        mNotice.setText(R.string.notice_setting_feedback);
+        tvNotice.setText(R.string.notice_setting_feedback);
     }
 
     /**
@@ -89,17 +88,17 @@ public class FeedbackActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mImageView.setImageDrawable(getResources().getDrawable(R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
                 return false;
             }
         });
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.color.white));
+        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.color.white));
         popupWindow.showAsDropDown(view,1,-5);
         mSuggestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSelect.setText(mSuggestion.getText().toString());
-                mImageView.setImageDrawable(getResources().getDrawable(R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
                 popupWindow.dismiss();
             }
         });
@@ -107,7 +106,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mSelect.setText(mProblem.getText().toString());
-                mImageView.setImageDrawable(getResources().getDrawable(R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
                 popupWindow.dismiss();
             }
         });
@@ -115,7 +114,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mSelect.setText(mForceInstall.getText().toString());
-                mImageView.setImageDrawable(getResources().getDrawable(R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
                 popupWindow.dismiss();
             }
         });
@@ -127,9 +126,9 @@ public class FeedbackActivity extends BaseActivity {
             return;
         }
 
-        mDevinfo = DevicesUtils.getFeedbackDeviceInfo(FeedbackActivity.this, title);
+        String devinfo = DevicesUtils.getFeedbackDeviceInfo(FeedbackActivity.this, title);
         String notice = this.getString(R.string.feedback_content);
-        String text = detail + "\n\n" + notice + "\n" + mDevinfo;
+        String text = detail + "\n\n" + notice + "\n" + devinfo;
         String titleContent = "Feedback, " + title;
         String tos = "gurecn@gmail.com;gurecn@163.com";
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -152,14 +151,12 @@ public class FeedbackActivity extends BaseActivity {
     }
 
     @Override
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.feed_menu, menu);
         menu.add(0,0,0,"退出");
         return true;
     }
     @Override
-
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==0 || item.getItemId() == android.R.id.home){
             finish();
