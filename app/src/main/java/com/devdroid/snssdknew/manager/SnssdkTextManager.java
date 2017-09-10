@@ -3,6 +3,8 @@ package com.devdroid.snssdknew.manager;
 import java.util.ArrayList;
 import java.util.List;
 import android.content.Context;
+import android.widget.Toast;
+
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
@@ -83,9 +85,15 @@ public class SnssdkTextManager implements LoadListener {
     }
 
     public List<SnssdkText> getmSnssdks(int type) {
-        mSnssdks.clear();
-        mSnssdks.addAll(loadMore(type));
-        SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
+        List<SnssdkText> snssdkTexts = loadMore(type);
+        if(snssdkTexts.size() > 0) {
+            mSnssdks.clear();
+            mSnssdks.addAll(snssdkTexts);
+            SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
+        } else {
+            mCurrentPage = 0;
+            SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(-1));
+        }
         return mSnssdks;
     }
 }

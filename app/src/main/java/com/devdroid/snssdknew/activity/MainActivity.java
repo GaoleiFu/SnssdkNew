@@ -21,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
@@ -38,6 +40,8 @@ import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
 import com.devdroid.snssdknew.utils.SimpleItemTouchHelperCallback;
+import com.devdroid.snssdknew.utils.log.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,9 +59,13 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private final Object mEventSubscriber = new Object() {
         @SuppressWarnings("unused")
         public void onEventMainThread(OnSnssdkLoadedEvent event) {
-            mSnssdkAdapter.notifyDataSetChanged();
-            mSwipeRefreshLayout.setRefreshing(false);
-            mRecyclerView.scrollToPosition(0);
+            if(event.getPosition() == 0) {
+                mSnssdkAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
+                mRecyclerView.scrollToPosition(0);
+            } else if(event.getPosition() == -1){
+                Toast.makeText(MainActivity.this, "已经到底了,即将自动滑到顶部", Toast.LENGTH_SHORT).show();
+            }
         }
         @SuppressWarnings("unused")
         public void onEventMainThread(OnBitmapGetFinishEvent event) {
@@ -155,14 +163,30 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(this);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && mLastVisibleItem + 1 == mSnssdkAdapter.getItemCount()) {
-                    SnssdkTextManager.getInstance().getmSnssdks(mType);
+                Logger.d("11111111111111", "newState:" + newState + "   mLastVisibleItem:" + mLastVisibleItem + "  mSnssdkAdapter.getItemCount():" + mSnssdkAdapter.getItemCount());
+                int lastPosition = -1;
+                if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                    if(layoutManager instanceof LinearLayoutManager){
+                        lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                    }else if(layoutManager instanceof StaggeredGridLayoutManager){
+                        //因为StaggeredGridLayoutManager的特殊性可能导致最后显示的item存在多个，所以这里取到的是一个数组
+                        //得到这个数组后再取到数组中position值最大的那个就是最后显示的position值了
+                        int[] lastPositions = new int[((StaggeredGridLayoutManager) layoutManager).getSpanCount()];
+                        ((StaggeredGridLayoutManager) layoutManager).findLastVisibleItemPositions(lastPositions);
+                        lastPosition = findMax(lastPositions);
+                    }
+                    if(lastPosition == recyclerView.getLayoutManager().getItemCount()-1){
+                        Logger.d("11111111111111", "滑到底部");
+                        SnssdkTextManager.getInstance().getmSnssdks(mType);
+                    }
                 }
+
             }
 
             @Override
@@ -172,6 +196,17 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             }
 
         });
+    }
+
+    //找到数组中的最大值
+    private int findMax(int[] lastPositions) {
+        int max = lastPositions[0];
+        for (int value : lastPositions) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
     }
 
     @Override
