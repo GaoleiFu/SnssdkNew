@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:title="@string/action_settings"
-        android:icon="@drawable/submit_setting_feedback"
+        android:icon="@mipmap/submit_setting_feedback"
         app:showAsAction="always" />
 </menu>

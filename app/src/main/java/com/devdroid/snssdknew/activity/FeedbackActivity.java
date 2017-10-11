@@ -88,7 +88,7 @@ public class FeedbackActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.mipmap.arrow_07));
                 return false;
             }
         });
@@ -98,7 +98,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mSelect.setText(mSuggestion.getText().toString());
-                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.mipmap.arrow_07));
                 popupWindow.dismiss();
             }
         });
@@ -106,7 +106,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mSelect.setText(mProblem.getText().toString());
-                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.mipmap.arrow_07));
                 popupWindow.dismiss();
             }
         });
@@ -114,7 +114,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mSelect.setText(mForceInstall.getText().toString());
-                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.drawable.arrow_07));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(FeedbackActivity.this, R.mipmap.arrow_07));
                 popupWindow.dismiss();
             }
         });
