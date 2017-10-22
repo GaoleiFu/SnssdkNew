@@ -6,12 +6,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.devdroid.snssdknew.database.BaseDataProvider;
-import com.devdroid.snssdknew.database.DeletePamas;
-import com.devdroid.snssdknew.database.InsertParams;
-import com.devdroid.snssdknew.database.UpdatePamas;
+import com.devdroid.snssdknew.database.params.DeletePamas;
+import com.devdroid.snssdknew.database.params.InsertParams;
+import com.devdroid.snssdknew.database.params.UpdatePamas;
 import com.devdroid.snssdknew.database.table.SnssdkTextTable;
 import com.devdroid.snssdknew.model.SnssdkText;
-import com.devdroid.snssdknew.utils.log.Logger;
 
 public class SnssdkDatabaseHelper {
 	private BaseDataProvider mHelper = null;

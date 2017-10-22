@@ -1,7 +1,8 @@
-package com.devdroid.snssdknew.database;
+package com.devdroid.snssdknew.database.dao;
 
 import java.util.List;
 
+import com.devdroid.snssdknew.database.BaseDataProvider;
 import com.devdroid.snssdknew.database.helper.SnssdkDatabaseHelper;
 import com.devdroid.snssdknew.model.SnssdkText;
 

@@ -7,6 +7,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.devdroid.snssdknew.database.params.DeletePamas;
+import com.devdroid.snssdknew.database.params.InsertParams;
+import com.devdroid.snssdknew.database.params.UpdatePamas;
+
 /**
  * 数据库工具类(封装共有方法及操作)
  * 

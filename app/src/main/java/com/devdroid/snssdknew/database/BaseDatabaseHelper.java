@@ -8,6 +8,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.devdroid.snssdknew.database.params.DeletePamas;
+import com.devdroid.snssdknew.database.params.InsertParams;
+import com.devdroid.snssdknew.database.params.UpdatePamas;
 import com.devdroid.snssdknew.database.table.SnssdkTextTable;
 
 /**

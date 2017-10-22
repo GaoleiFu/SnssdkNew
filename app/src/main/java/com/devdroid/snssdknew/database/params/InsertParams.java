@@ -1,4 +1,4 @@
-package com.devdroid.snssdknew.database;
+package com.devdroid.snssdknew.database.params;
 
 import android.content.ContentValues;
 /**

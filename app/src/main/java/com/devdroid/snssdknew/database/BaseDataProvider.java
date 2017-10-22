@@ -5,6 +5,11 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+
+import com.devdroid.snssdknew.database.params.DeletePamas;
+import com.devdroid.snssdknew.database.params.InsertParams;
+import com.devdroid.snssdknew.database.params.UpdatePamas;
+
 /**
  * 基础数据库操作类(所有需要操作数据库的接口需要实现该类)
  * 类名称：BaseDataProvider

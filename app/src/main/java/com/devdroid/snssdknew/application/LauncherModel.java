@@ -3,7 +3,7 @@ package com.devdroid.snssdknew.application;
 import android.content.Context;
 
 import com.devdroid.snssdknew.database.BaseDataProvider;
-import com.devdroid.snssdknew.database.SnssdkTextDao;
+import com.devdroid.snssdknew.database.dao.SnssdkTextDao;
 import com.devdroid.snssdknew.manager.SharedPreferencesManager;
 
 /**
