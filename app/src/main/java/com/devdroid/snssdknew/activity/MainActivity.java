@@ -1,5 +1,7 @@
 package com.devdroid.snssdknew.activity;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -30,6 +32,7 @@ import com.devdroid.snssdknew.adapter.SnssdkTextAdapter;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.base.BaseActivity;
+import com.devdroid.snssdknew.constant.CustomConstant;
 import com.devdroid.snssdknew.eventbus.OnBitmapGetFinishEvent;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
@@ -51,8 +54,8 @@ import java.util.concurrent.ExecutionException;
 /**
  * 主界面
  */
-public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener , OnRecyclerItemClickListener, OnDismissAndShareListener {
-    private SnssdkTextAdapter mSnssdkAdapter;
+public class MainActivity extends BaseActivity{
+//    private SnssdkTextAdapter mSnssdkAdapter;
     /**
      * 事件监听
      */
@@ -60,9 +63,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         @SuppressWarnings("unused")
         public void onEventMainThread(OnSnssdkLoadedEvent event) {
             if(event.getPosition() == 0) {
-                mSnssdkAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
-                mRecyclerView.scrollToPosition(0);
+//                mSnssdkAdapter.notifyDataSetChanged();
+//                mSwipeRefreshLayout.setRefreshing(false);
+//                mRecyclerView.scrollToPosition(0);
             } else if(event.getPosition() == -1){
                 Toast.makeText(MainActivity.this, "已经到底了,即将自动滑到顶部", Toast.LENGTH_SHORT).show();
             }
@@ -78,12 +81,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             MainActivity.this.startActivity(intent);
         }
     };
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+//    private SwipeRefreshLayout mSwipeRefreshLayout;
     private SwitchCompat mSwNetSetting;
     private int mType = 0;
     private List<SnssdkText> mSnssdkTexts;
     private Toolbar mToolbar;
-    private RecyclerView mRecyclerView;
+//    private RecyclerView mRecyclerView;
     private SnssdkText oldSnssdkText;
     private Menu mMenuItem;
     private int mLastVisibleItem;
@@ -110,11 +113,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             return true;
         } else if(item.getItemId() == R.id.action_resave && oldSnssdkText != null){
             LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(oldSnssdkText);
-            Snackbar.make(mRecyclerView, "内容已还原", Snackbar.LENGTH_SHORT).show();
+//            Snackbar.make(mRecyclerView, "内容已还原", Snackbar.LENGTH_SHORT).show();
             oldSnssdkText = null;
             item.setVisible(false);
         } else {
-            Snackbar.make(mRecyclerView, "未缓存数据", Snackbar.LENGTH_SHORT).show();
+//            Snackbar.make(mRecyclerView, "未缓存数据", Snackbar.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -136,6 +139,16 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 }
             }
         });
+
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        SnssdkFragment fragmentText = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_TEXT, CustomConstant.SNSSDK_ALL);
+        SnssdkFragment fragmentTextCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_TEXT, CustomConstant.SNSSDK_COLLECTION);
+        SnssdkFragment fragmentImage = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_ALL);
+        SnssdkFragment fragmentImageCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_COLLECTION);
+        fragmentTransaction.add(R.id.fragment_container, fragmentText).commit();
+//        fragmentTransaction.add(R.id.fragment_container, fragmentTextCollection);
+//        fragmentTransaction.add(R.id.fragment_container, fragmentImage);
+//        fragmentTransaction.add(R.id.fragment_container, fragmentImageCollection);
     }
 
     private void initView() {
@@ -149,53 +162,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mSwNetSetting = (SwitchCompat)navigationView.getHeaderView(0).findViewById(R.id.switch_nav_header_net);
         NavigationItemSelectedListener navigationItemSelectedListener = new NavigationItemSelectedListener(this, drawer);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
-        mSnssdkAdapter = new SnssdkTextAdapter(this, mSnssdkTexts);
-        mSnssdkAdapter.setItemClickListener(this);
-        mRecyclerView.setAdapter(mSnssdkAdapter);
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(this);
-        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                Logger.d("11111111111111", "newState:" + newState + "   mLastVisibleItem:" + mLastVisibleItem + "  mSnssdkAdapter.getItemCount():" + mSnssdkAdapter.getItemCount());
-                int lastPosition = -1;
-                if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                    if(layoutManager instanceof LinearLayoutManager){
-                        lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
-                    }else if(layoutManager instanceof StaggeredGridLayoutManager){
-                        //因为StaggeredGridLayoutManager的特殊性可能导致最后显示的item存在多个，所以这里取到的是一个数组
-                        //得到这个数组后再取到数组中position值最大的那个就是最后显示的position值了
-                        int[] lastPositions = new int[((StaggeredGridLayoutManager) layoutManager).getSpanCount()];
-                        ((StaggeredGridLayoutManager) layoutManager).findLastVisibleItemPositions(lastPositions);
-                        lastPosition = findMax(lastPositions);
-                    }
-                    if(lastPosition == recyclerView.getLayoutManager().getItemCount()-1){
-                        Logger.d("11111111111111", "滑到底部");
-                        SnssdkTextManager.getInstance().getmSnssdks(mType);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                mLastVisibleItem = layoutManager.findLastVisibleItemPosition();
-            }
-
-        });
     }
 
     //找到数组中的最大值
@@ -225,82 +192,59 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         SnssdknewApplication.getGlobalEventBus().unregister(mEventSubscriber);
     }
 
-    @Override
-    public void onRefresh() {
-        if(mType != 1) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            SnssdkTextManager.getInstance().freshMore(this, mType);
-        } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
     public void setSnssdkType(int type){
-        mType = type;
-        if(type == 0){
-            mToolbar.setTitle(getString(R.string.nav_string_text));
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            mRecyclerView.setLayoutManager(layoutManager);
-        } else if(type == 1){
-            mToolbar.setTitle(getString(R.string.nav_string_collection_text));
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            mRecyclerView.setLayoutManager(layoutManager);
-        } else if(type == 2){
-            mToolbar.setTitle(getString(R.string.nav_string_image));
-            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-        } else if(type == 3){
-            mToolbar.setTitle(getString(R.string.nav_string_collection_image));
-            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-        }
-        this.mType = type;
-        mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
-        mSnssdkAdapter.notifyDataSetChanged();
+//        mType = type;
+//        if(type == 0){
+//            mToolbar.setTitle(getString(R.string.nav_string_text));
+//            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//            mRecyclerView.setLayoutManager(layoutManager);
+//        } else if(type == 1){
+//            mToolbar.setTitle(getString(R.string.nav_string_collection_text));
+//            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//            mRecyclerView.setLayoutManager(layoutManager);
+//        } else if(type == 2){
+//            mToolbar.setTitle(getString(R.string.nav_string_image));
+//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+//            mRecyclerView.setLayoutManager(gridLayoutManager);
+//        } else if(type == 3){
+//            mToolbar.setTitle(getString(R.string.nav_string_collection_image));
+//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+//            mRecyclerView.setLayoutManager(gridLayoutManager);
+//        }
+//        this.mType = type;
+//        mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
+//        mSnssdkAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onItemClick(RecyclerView.Adapter parent, View v, int position, int showType) {
-        if(showType == 2) {
-            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-        } else {
-            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-        }
-        mRecyclerView.scrollToPosition(position);
-        mSnssdkAdapter.setShowColumnChanged();
-        mSnssdkAdapter.notifyDataSetChanged();
-    }
 
-    @Override
-    public void onItemDismiss(int position) {
-        SnssdkText snssdkText = mSnssdkTexts.get(position);
-        oldSnssdkText = snssdkText;
-        LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
-        mSnssdkTexts.remove(position);
-        mSnssdkAdapter.notifyItemRemoved(position);
-        mMenuItem.findItem(R.id.action_resave).setVisible(true);
-    }
+//    @Override
+//    public void onItemDismiss(int position) {
+//        SnssdkText snssdkText = mSnssdkTexts.get(position);
+//        oldSnssdkText = snssdkText;
+//        LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
+//        mSnssdkTexts.remove(position);
+//        mSnssdkAdapter.notifyItemRemoved(position);
+//        mMenuItem.findItem(R.id.action_resave).setVisible(true);
+//    }
 
-    @Override
-    public void onItemShare(int position, View currentView) {
-        SnssdkText snssdkText = mSnssdkTexts.get(position);
-        if(snssdkText.getIsCollection() == 1) {
-            if(snssdkText.getSnssdkType() == 2) {  //分享图片
-                shareImage(snssdkText.getSnssdkContent());
-                mSnssdkAdapter.notifyItemChanged(position);
-            } else {
-                shareText(snssdkText.getSnssdkContent());
-                mSnssdkAdapter.notifyItemChanged(position);
-            }
-        } else {
-            snssdkText.setIsCollection(1);
-            LauncherModel.getInstance().getSnssdkTextDao().updateSnssdkItem(snssdkText);
-            mSnssdkTexts.remove(position);
-            mSnssdkAdapter.notifyItemRemoved(position);
-        }
-    }
+//    @Override
+//    public void onItemShare(int position, View currentView) {
+//        SnssdkText snssdkText = mSnssdkTexts.get(position);
+//        if(snssdkText.getIsCollection() == 1) {
+//            if(snssdkText.getSnssdkType() == 2) {  //分享图片
+//                shareImage(snssdkText.getSnssdkContent());
+//                mSnssdkAdapter.notifyItemChanged(position);
+//            } else {
+//                shareText(snssdkText.getSnssdkContent());
+//                mSnssdkAdapter.notifyItemChanged(position);
+//            }
+//        } else {
+//            snssdkText.setIsCollection(1);
+//            LauncherModel.getInstance().getSnssdkTextDao().updateSnssdkItem(snssdkText);
+//            mSnssdkTexts.remove(position);
+//            mSnssdkAdapter.notifyItemRemoved(position);
+//        }
+//    }
 
     private void shareText(String text) {
         Intent shareIntent = new Intent();

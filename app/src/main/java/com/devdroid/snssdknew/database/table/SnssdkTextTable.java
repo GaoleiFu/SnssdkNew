@@ -6,8 +6,6 @@ package com.devdroid.snssdknew.database.table;
 public class SnssdkTextTable {
 	public static final String ID = "id";
 	public static final String COMPONENTNAME = "snssdk_content";
-
-	//数据库2.0
 	public static final String SNSSDK_TYPE = "snssdk_type";
 	public static final String SNSSDK_COLLECTION = "snssdk_collection";
 
@@ -20,7 +18,7 @@ public class SnssdkTextTable {
 	 * ============== 构造表的语句 ==============
 	 */
 	public static final String CREATE_TABLE = "create table " + TABLE_NAME + " ("
-			+ ID + " integer primary key, "
+			+ ID + " integer primary key autoincrement, "
 			+ COMPONENTNAME + " text,"
 			+ SNSSDK_TYPE + " INTEGER,"
 			+ SNSSDK_COLLECTION + " INTEGER)";

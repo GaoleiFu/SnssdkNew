@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 def dateTime() {
     return new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+8"))
 }
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"

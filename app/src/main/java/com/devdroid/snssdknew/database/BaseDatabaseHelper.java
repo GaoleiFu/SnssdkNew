@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.devdroid.snssdknew.database.params.DeletePamas;
 import com.devdroid.snssdknew.database.params.InsertParams;
 import com.devdroid.snssdknew.database.params.UpdatePamas;
+import com.devdroid.snssdknew.database.table.SnssdkImageTable;
 import com.devdroid.snssdknew.database.table.SnssdkTextTable;
 
 /**
@@ -110,6 +111,7 @@ public class BaseDatabaseHelper extends SQLiteOpenHelper {
 		db.beginTransaction();
 		try {
 			db.execSQL(SnssdkTextTable.CREATE_TABLE);
+			db.execSQL(SnssdkImageTable.CREATE_TABLE);
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			e.printStackTrace();
