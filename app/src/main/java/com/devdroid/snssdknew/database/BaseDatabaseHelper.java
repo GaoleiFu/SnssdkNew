@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.devdroid.snssdknew.database.table.SnssdkTextTable;
+
 /**
  * 基础数据库实现类(所有数据库都需要继承该类)
  * 类名称：BaseDatabaseHelper 类描述： 创建人：makai 修改人：makai 修改时间：2014年10月14日 下午4:06:45

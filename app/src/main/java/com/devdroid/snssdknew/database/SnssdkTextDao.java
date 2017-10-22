@@ -2,7 +2,7 @@ package com.devdroid.snssdknew.database;
 
 import java.util.List;
 
-import com.devdroid.snssdknew.model.BaseSnssdkModel;
+import com.devdroid.snssdknew.database.helper.SnssdkDatabaseHelper;
 import com.devdroid.snssdknew.model.SnssdkText;
 
 /**
@@ -16,8 +16,8 @@ public class SnssdkTextDao {
         mSnssdkDatabaseHelper = new SnssdkDatabaseHelper(dataProvider);
     }
 
-    public List<SnssdkText> queryLockerInfo(int type, int page) {
-        return mSnssdkDatabaseHelper.querySnssdkInfo(type, page);
+    public List<SnssdkText> queryLockerInfo(int type) {
+        return mSnssdkDatabaseHelper.querySnssdkInfo(type);
     }
 
     public void insertSnssdkItem(List<SnssdkText> insertList) {

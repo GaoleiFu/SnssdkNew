@@ -3,8 +3,6 @@ package com.devdroid.snssdknew.manager;
 import java.util.ArrayList;
 import java.util.List;
 import android.content.Context;
-import android.widget.Toast;
-
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
@@ -21,7 +19,6 @@ public class SnssdkTextManager implements LoadListener {
     private List<SnssdkText> mSnssdks;
     private RemoteSettingManager mRemoteSettingManager;
     private int mType;
-    private int mCurrentPage;  //当前显示页
 
     private SnssdkTextManager() {
         mSnssdks = new ArrayList<>();
@@ -63,10 +60,9 @@ public class SnssdkTextManager implements LoadListener {
      */
     private List<SnssdkText> loadMore(int type) {
         if(mType != type){
-            mCurrentPage = 0;
             mType = type;
         }
-        return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type, mCurrentPage++ -1);
+        return LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(type);
     }
 
     /**
@@ -74,13 +70,8 @@ public class SnssdkTextManager implements LoadListener {
      */
     @Override
     public void loadLoaded(List<SnssdkText> snssdks) {
-        if(mCurrentPage > 1){
-            mSnssdks.clear();
-            mSnssdks.addAll(LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(mType, mCurrentPage-- -1));
-        } else {
-            mSnssdks.clear();
-            mSnssdks.addAll(loadMore(mType));
-        }
+        mSnssdks.clear();
+        mSnssdks.addAll(loadMore(mType));
         SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
     }
 
@@ -91,7 +82,6 @@ public class SnssdkTextManager implements LoadListener {
             mSnssdks.addAll(snssdkTexts);
             SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
         } else {
-            mCurrentPage = 0;
             SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(-1));
         }
         return mSnssdks;
