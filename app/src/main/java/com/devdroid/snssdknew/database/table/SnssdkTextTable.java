@@ -20,6 +20,5 @@ public class SnssdkTextTable {
 	public static final String CREATE_TABLE = "create table " + TABLE_NAME + " ("
 			+ ID + " integer primary key autoincrement, "
 			+ COMPONENTNAME + " text,"
-			+ SNSSDK_TYPE + " INTEGER,"
 			+ SNSSDK_COLLECTION + " INTEGER)";
 }

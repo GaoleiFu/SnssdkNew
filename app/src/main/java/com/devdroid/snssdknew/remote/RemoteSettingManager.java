@@ -86,8 +86,8 @@ public class RemoteSettingManager {
 											snssdksImage.add(snssdkText);
 										}
 									}
-									LauncherModel.getInstance().getSnssdkImage().insertSnssdkItem(snssdksImage);
 								}
+								LauncherModel.getInstance().getSnssdkImage().insertSnssdkItem(snssdksImage);
 							}
 						}
 					}

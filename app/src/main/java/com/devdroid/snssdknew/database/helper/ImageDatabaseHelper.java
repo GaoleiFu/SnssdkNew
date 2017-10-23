@@ -24,18 +24,17 @@ public class ImageDatabaseHelper {
     /**
      * 查询当前笑话信息
      */
-    public List<SnssdkImage> querySnssdkInfo(int type) {
+    public List<SnssdkImage> querySnssdkInfo(int collectionStatue) {
         List<SnssdkImage> list = new ArrayList<>();
-        Cursor cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=?", new String[]{"" + type}, SnssdkTextTable.ID);
+        Cursor cursor = mHelper.query(SnssdkImageTable.TABLE_NAME, null, SnssdkImageTable.SNSSDK_IMAGE_COLLECTION + "=?", new String[]{"" + collectionStatue}, SnssdkImageTable.ID);
         if (null != cursor) {
             try {
                 while (cursor.moveToNext()) {
-                    String component = cursor.getString(cursor.getColumnIndex(SnssdkTextTable.COMPONENTNAME));
                     String snssdkUrl = cursor.getString(cursor.getColumnIndex(SnssdkImageTable.SNSSDK_IMAGE_URL));
                     int snssdkWidth = cursor.getInt(cursor.getColumnIndex(SnssdkImageTable.SNSSDK_IMAGE_WIDTH));
                     int snssdkHeight = cursor.getInt(cursor.getColumnIndex(SnssdkImageTable.SNSSDK_IMAGE_HEIGHT));
                     int snssdkCollection = cursor.getInt(cursor.getColumnIndex(SnssdkImageTable.SNSSDK_IMAGE_COLLECTION));
-                    if (null != component) {
+                    if (null != snssdkUrl) {
                         SnssdkImage snssdkText = new SnssdkImage();
                         snssdkText.setSnssdkUrl(snssdkUrl);
                         snssdkText.setWidth(snssdkWidth);

@@ -13,7 +13,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.adapter.SnssdkImageAdapter;
 import com.devdroid.snssdknew.adapter.SnssdkTextAdapter;
@@ -28,17 +27,8 @@ import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.remote.LoadListener;
 import com.devdroid.snssdknew.remote.RemoteSettingManager;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
-
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SnssdkFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SnssdkFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnRecyclerItemClickListener, LoadListener, Handler.Callback  {
     private static final String ARG_SNSSDK_TYPE = "snssdkType";
     private static final String ARG_COLLECTION_STATUE = "collectionStatue";
@@ -116,9 +106,6 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         }
-//        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(this);
-//        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-//        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -147,16 +134,14 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onItemClick(RecyclerView.Adapter parent, View v, int position, int showType) {
-        if(showType == 2) {
-            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-        } else {
-            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-        }
-        mRecyclerView.scrollToPosition(position);
-//        mSnssdkAdapter.setShowColumnChanged();
-//        mSnssdkAdapter.notifyDataSetChanged();
+//        if(showType == 2) {
+//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+//            mRecyclerView.setLayoutManager(gridLayoutManager);
+//        } else {
+//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+//            mRecyclerView.setLayoutManager(gridLayoutManager);
+//        }
+//        mRecyclerView.scrollToPosition(position);
     }
 
     @Override

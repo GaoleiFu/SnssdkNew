@@ -28,14 +28,12 @@ public class SnssdkDatabaseHelper {
                 while (cursor.moveToNext()) {
                     String component = cursor.getString(cursor.getColumnIndex(SnssdkTextTable.COMPONENTNAME));
                     int id = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.ID));
-                    int snssdkType = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.SNSSDK_TYPE));
                     int snssdkCollection = cursor.getInt(cursor.getColumnIndex(SnssdkTextTable.SNSSDK_COLLECTION));
                     if (null != component) {
                         SnssdkText snssdkText = new SnssdkText();
                         snssdkText.setId(id);
                         snssdkText.setSnssdkContent(component);
                         snssdkText.setIsCollection(snssdkCollection);
-                        snssdkText.setSnssdkType(snssdkType);
                         list.add(snssdkText);
                     }
                 }
@@ -70,7 +68,6 @@ public class SnssdkDatabaseHelper {
         if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + snssdkText + "'")) {
             ContentValues values = new ContentValues();
             values.put(SnssdkTextTable.COMPONENTNAME,snssdkText.getSnssdkContent());
-            values.put(SnssdkTextTable.SNSSDK_TYPE,snssdkText.getSnssdkType());
             values.put(SnssdkTextTable.SNSSDK_COLLECTION,snssdkText.getIsCollection());
             InsertParams insert = new InsertParams(SnssdkTextTable.TABLE_NAME, values);
             list.add(insert);
@@ -85,7 +82,6 @@ public class SnssdkDatabaseHelper {
             if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + snssdkText + "'")) {
                 ContentValues values = new ContentValues();
                 values.put(SnssdkTextTable.COMPONENTNAME,snssdkText.getSnssdkContent());
-                values.put(SnssdkTextTable.SNSSDK_TYPE,snssdkText.getSnssdkType());
                 values.put(SnssdkTextTable.SNSSDK_COLLECTION,snssdkText.getIsCollection());
                 InsertParams insert = new InsertParams(SnssdkTextTable.TABLE_NAME, values);
                 list.add(insert);

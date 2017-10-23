@@ -13,8 +13,8 @@ public class SnssdkImageDao {
         mSnssdkDatabaseHelper = new ImageDatabaseHelper(dataProvider);
     }
 
-    public List<SnssdkImage> queryLockerInfo(int type) {
-        return mSnssdkDatabaseHelper.querySnssdkInfo(type);
+    public List<SnssdkImage> queryLockerInfo(int collectionStatue) {
+        return mSnssdkDatabaseHelper.querySnssdkInfo(collectionStatue);
     }
 
     public void insertSnssdkItem(List<SnssdkImage> insertList) {

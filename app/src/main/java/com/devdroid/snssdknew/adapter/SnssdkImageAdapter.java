@@ -8,12 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
+import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
 import com.devdroid.snssdknew.model.SnssdkImage;
 
@@ -31,12 +31,13 @@ public class SnssdkImageAdapter  extends RecyclerView.Adapter<SnssdkImageAdapter
     private List<SnssdkImage> snssdks;
     private final int mScreenWidth;
     private OnRecyclerItemClickListener listener;
-    private int mShowColumn = 2;
+    private int mShowColumn = 1;
 
     public SnssdkImageAdapter(Context context, List<SnssdkImage> snssdks){
         this.mContext = context;
         this.snssdks = snssdks;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        assert wm != null;
         Display d = wm.getDefaultDisplay();
         mScreenWidth = d.getWidth();
     }
@@ -45,19 +46,10 @@ public class SnssdkImageAdapter  extends RecyclerView.Adapter<SnssdkImageAdapter
         this.listener = itemClickListener;
     }
 
-    public void setShowColumnChanged(){
-        this.mShowColumn = 2 /this.mShowColumn;
-    }
-
     @Override
     public SnssdkImageAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == 2){
-            View view = View.inflate(parent.getContext(), R.layout.item_snssdk_image, null);
-            return new SnssdkImageAdapter.ViewHolderImage(view);
-        } else {
-            View view = View.inflate(parent.getContext(), R.layout.item_snssdk_text, null);
-            return new SnssdkImageAdapter.ViewHolder(view);
-        }
+        View view = View.inflate(parent.getContext(), R.layout.item_snssdk_image, null);
+        return new SnssdkImageAdapter.ViewHolder(view);
     }
 
 
@@ -65,12 +57,12 @@ public class SnssdkImageAdapter  extends RecyclerView.Adapter<SnssdkImageAdapter
     public void onBindViewHolder(SnssdkImageAdapter.ViewHolder holder, final int position) {
         if(snssdks != null && snssdks.size() > position) {
             SnssdkImage snssdk = snssdks.get(position);
-            final SnssdkImageAdapter.ViewHolderImage viewHolderImage = (SnssdkImageAdapter.ViewHolderImage)holder;
+            final SnssdkImageAdapter.ViewHolder viewHolderImage = holder;
             String url = snssdk.getSnssdkUrl();
             if(url.endsWith("gif")) {
-                Glide.with(mContext).load(snssdk.getSnssdkUrl()).asGif().placeholder(R.mipmap.ic_launcher).crossFade().into(viewHolderImage.mImageView);
+                Glide.with(SnssdknewApplication.getAppContext()).load(snssdk.getSnssdkUrl()).asGif().placeholder(R.mipmap.zhuopin_logo).crossFade().into(viewHolderImage.mImageView);
             } else {
-                Glide.with(mContext).load(snssdk.getSnssdkUrl()).asBitmap().placeholder(R.mipmap.ic_launcher).centerCrop().into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+                Glide.with(SnssdknewApplication.getAppContext()).load(snssdk.getSnssdkUrl()).asBitmap().placeholder(R.mipmap.zhuopin_logo).centerCrop().into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         int imageWidth = resource.getWidth();
@@ -101,17 +93,9 @@ public class SnssdkImageAdapter  extends RecyclerView.Adapter<SnssdkImageAdapter
         return snssdks.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
-        TextView mTextValue;
-        ViewHolder(View itemView) {
-            super(itemView);
-            mTextValue = itemView.findViewById(R.id.tv_item_snssdk_content);
-        }
-    }
-
-    private class ViewHolderImage extends SnssdkImageAdapter.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
-        ViewHolderImage(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.iv_item_snssdk_image_image);
         }
