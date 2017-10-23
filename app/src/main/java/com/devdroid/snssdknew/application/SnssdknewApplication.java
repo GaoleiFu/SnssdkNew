@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.devdroid.snssdknew.constant.ApiConstant;
-import com.devdroid.snssdknew.manager.SnssdkTextManager;
 import com.devdroid.snssdknew.utils.CrashHandler;
 
 import de.greenrobot.event.EventBus;
@@ -31,7 +30,6 @@ public class SnssdknewApplication extends Application {
 //        sGLOBAL_REQUEST_QUEUE = Volley.newRequestQueue(this);
         CrashHandler.getInstance().init(this, ApiConstant.LOG_DIR);
         LauncherModel.initSingleton(this);
-        SnssdkTextManager.initSingleton();
     }
     /**
      * 获取一个全局的RequestQueue实例<br>

@@ -1,19 +1,12 @@
 package com.devdroid.snssdknew.activity;
 
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,14 +14,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
-import com.devdroid.snssdknew.adapter.SnssdkTextAdapter;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.base.BaseActivity;
@@ -36,26 +25,17 @@ import com.devdroid.snssdknew.constant.CustomConstant;
 import com.devdroid.snssdknew.eventbus.OnBitmapGetFinishEvent;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
-import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
-import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
-import com.devdroid.snssdknew.manager.SnssdkTextManager;
 import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
-import com.devdroid.snssdknew.utils.DividerItemDecoration;
-import com.devdroid.snssdknew.utils.SimpleItemTouchHelperCallback;
-import com.devdroid.snssdknew.utils.log.Logger;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
  * 主界面
  */
 public class MainActivity extends BaseActivity{
-//    private SnssdkTextAdapter mSnssdkAdapter;
     /**
      * 事件监听
      */
@@ -63,11 +43,6 @@ public class MainActivity extends BaseActivity{
         @SuppressWarnings("unused")
         public void onEventMainThread(OnSnssdkLoadedEvent event) {
             if(event.getPosition() == 0) {
-//                mSnssdkAdapter.notifyDataSetChanged();
-//                mSwipeRefreshLayout.setRefreshing(false);
-//                mRecyclerView.scrollToPosition(0);
-            } else if(event.getPosition() == -1){
-                Toast.makeText(MainActivity.this, "已经到底了,即将自动滑到顶部", Toast.LENGTH_SHORT).show();
             }
         }
         @SuppressWarnings("unused")
@@ -81,15 +56,12 @@ public class MainActivity extends BaseActivity{
             MainActivity.this.startActivity(intent);
         }
     };
-//    private SwipeRefreshLayout mSwipeRefreshLayout;
     private SwitchCompat mSwNetSetting;
-    private int mType = 0;
-    private List<SnssdkText> mSnssdkTexts;
-    private Toolbar mToolbar;
-//    private RecyclerView mRecyclerView;
     private SnssdkText oldSnssdkText;
-    private Menu mMenuItem;
-    private int mLastVisibleItem;
+    private SnssdkFragment mFragmentText;
+    private SnssdkFragment mFragmentTextCollection;
+    private SnssdkFragment mFragmentImage;
+    private SnssdkFragment mFragmentImageCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +74,6 @@ public class MainActivity extends BaseActivity{
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        mMenuItem = menu;
         return true;
     }
     @Override
@@ -113,13 +84,9 @@ public class MainActivity extends BaseActivity{
             return true;
         } else if(item.getItemId() == R.id.action_resave && oldSnssdkText != null){
             LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(oldSnssdkText);
-//            Snackbar.make(mRecyclerView, "内容已还原", Snackbar.LENGTH_SHORT).show();
             oldSnssdkText = null;
             item.setVisible(false);
-        } else {
-//            Snackbar.make(mRecyclerView, "未缓存数据", Snackbar.LENGTH_SHORT).show();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -141,39 +108,25 @@ public class MainActivity extends BaseActivity{
         });
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        SnssdkFragment fragmentText = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_TEXT, CustomConstant.SNSSDK_ALL);
-        SnssdkFragment fragmentTextCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_TEXT, CustomConstant.SNSSDK_COLLECTION);
-        SnssdkFragment fragmentImage = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_ALL);
-        SnssdkFragment fragmentImageCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_COLLECTION);
-        fragmentTransaction.add(R.id.fragment_container, fragmentText).commit();
-//        fragmentTransaction.add(R.id.fragment_container, fragmentTextCollection);
-//        fragmentTransaction.add(R.id.fragment_container, fragmentImage);
-//        fragmentTransaction.add(R.id.fragment_container, fragmentImageCollection);
+        mFragmentText = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_TEXT, CustomConstant.SNSSDK_ALL);
+        mFragmentTextCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_TEXT, CustomConstant.SNSSDK_COLLECTION);
+        mFragmentImage = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_ALL);
+        mFragmentImageCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_COLLECTION);
+        fragmentTransaction.add(R.id.fragment_container, mFragmentText).commit();
     }
 
     private void initView() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.main_navigation_view);
-        mSwNetSetting = (SwitchCompat)navigationView.getHeaderView(0).findViewById(R.id.switch_nav_header_net);
+        mSwNetSetting = navigationView.getHeaderView(0).findViewById(R.id.switch_nav_header_net);
         NavigationItemSelectedListener navigationItemSelectedListener = new NavigationItemSelectedListener(this, drawer);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
 
-    }
-
-    //找到数组中的最大值
-    private int findMax(int[] lastPositions) {
-        int max = lastPositions[0];
-        for (int value : lastPositions) {
-            if (value > max) {
-                max = value;
-            }
-        }
-        return max;
     }
 
     @Override
@@ -193,58 +146,40 @@ public class MainActivity extends BaseActivity{
     }
 
     public void setSnssdkType(int type){
-//        mType = type;
-//        if(type == 0){
-//            mToolbar.setTitle(getString(R.string.nav_string_text));
-//            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//            mRecyclerView.setLayoutManager(layoutManager);
-//        } else if(type == 1){
-//            mToolbar.setTitle(getString(R.string.nav_string_collection_text));
-//            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//            mRecyclerView.setLayoutManager(layoutManager);
-//        } else if(type == 2){
-//            mToolbar.setTitle(getString(R.string.nav_string_image));
-//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-//            mRecyclerView.setLayoutManager(gridLayoutManager);
-//        } else if(type == 3){
-//            mToolbar.setTitle(getString(R.string.nav_string_collection_image));
-//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-//            mRecyclerView.setLayoutManager(gridLayoutManager);
-//        }
-//        this.mType = type;
-//        mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(mType);
-//        mSnssdkAdapter.notifyDataSetChanged();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        switch (type){
+            case 0:
+                if(!mFragmentText.isAdded()) {
+                    fragmentTransaction.add(R.id.fragment_container, mFragmentText);
+                } else {
+                    fragmentTransaction.show(mFragmentText);
+                }
+                break;
+            case 1:
+                if(!mFragmentTextCollection.isAdded()) {
+                    fragmentTransaction.add(R.id.fragment_container, mFragmentTextCollection);
+                } else {
+                    fragmentTransaction.show(mFragmentTextCollection);
+                }
+                break;
+            case 2:
+                if(!mFragmentImage.isAdded()) {
+                    fragmentTransaction.add(R.id.fragment_container, mFragmentImage);
+                } else {
+                    fragmentTransaction.show(mFragmentImage);
+                }
+                break;
+            case 3:
+                if(!mFragmentImageCollection.isAdded()) {
+                    fragmentTransaction.add(R.id.fragment_container, mFragmentImageCollection);
+                } else {
+                    fragmentTransaction.show(mFragmentImageCollection);
+                }
+                break;
+        }
+        fragmentTransaction.commit();
     }
 
-
-//    @Override
-//    public void onItemDismiss(int position) {
-//        SnssdkText snssdkText = mSnssdkTexts.get(position);
-//        oldSnssdkText = snssdkText;
-//        LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
-//        mSnssdkTexts.remove(position);
-//        mSnssdkAdapter.notifyItemRemoved(position);
-//        mMenuItem.findItem(R.id.action_resave).setVisible(true);
-//    }
-
-//    @Override
-//    public void onItemShare(int position, View currentView) {
-//        SnssdkText snssdkText = mSnssdkTexts.get(position);
-//        if(snssdkText.getIsCollection() == 1) {
-//            if(snssdkText.getSnssdkType() == 2) {  //分享图片
-//                shareImage(snssdkText.getSnssdkContent());
-//                mSnssdkAdapter.notifyItemChanged(position);
-//            } else {
-//                shareText(snssdkText.getSnssdkContent());
-//                mSnssdkAdapter.notifyItemChanged(position);
-//            }
-//        } else {
-//            snssdkText.setIsCollection(1);
-//            LauncherModel.getInstance().getSnssdkTextDao().updateSnssdkItem(snssdkText);
-//            mSnssdkTexts.remove(position);
-//            mSnssdkAdapter.notifyItemRemoved(position);
-//        }
-//    }
 
     private void shareText(String text) {
         Intent shareIntent = new Intent();

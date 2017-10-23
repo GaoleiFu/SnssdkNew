@@ -4,6 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.constant.ApiConstant;
+import com.devdroid.snssdknew.constant.CustomConstant;
+import com.devdroid.snssdknew.model.SnssdkImage;
 import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.utils.Machine;
 import org.json.JSONArray;
@@ -18,9 +20,10 @@ public class RemoteSettingManager {
 
 	public void connectToServer(Context context, int type) {
 		String url = String.format(ApiConstant.GET_SNSSDK_URL_FRESH, Machine.getLocaldeviceId(context));
-		if(type == 2) {
+		if(type == CustomConstant.SNSSDK_TYPE_IMAGE) {
 			url = String.format(ApiConstant.GET_SNSSDK_IMAGE_URL_FRESH, Machine.getLocaldeviceId(context));
 		}
+
 		TaskProcessor taskProcessor = new TaskProcessor(){
 			@Override
 			public void processResult(JSONObject result, int type) {
@@ -35,16 +38,17 @@ public class RemoteSettingManager {
 		Runnable okRunnable = new Runnable() {
 			@Override
 			public void run() {
-				LinkedList<SnssdkText> snssdksContent = new LinkedList<>();
-				if(result != null) {
+				if (result != null) {
 					JSONObject jSonData = result.optJSONObject("data");
 					if (jSonData != null) {
 						JSONArray jsonArrayData = jSonData.optJSONArray("data");
 						if (jsonArrayData != null && jsonArrayData.length() > 0) {
-							for (int i = 0; i < jsonArrayData.length(); i++) {
-								JSONObject jsonGroup = jsonArrayData.optJSONObject(i).optJSONObject("group");
-								if (jsonGroup != null) {
-									if(type == 0) {
+							LinkedList<SnssdkText> snssdksContent = new LinkedList<>();
+							LinkedList<SnssdkImage> snssdksImage = new LinkedList<>();
+							if (type == CustomConstant.SNSSDK_TYPE_TEXT) {
+								for (int i = 0; i < jsonArrayData.length(); i++) {
+									JSONObject jsonGroup = jsonArrayData.optJSONObject(i).optJSONObject("group");
+									if (jsonGroup != null) {
 										String content = jsonGroup.optString("content");
 										if (!content.isEmpty()) {
 											SnssdkText snssdkText = new SnssdkText();
@@ -53,33 +57,42 @@ public class RemoteSettingManager {
 											snssdkText.setSnssdkContent(content);
 											snssdksContent.add(snssdkText);
 										}
-									} else if(type == 2){
+									}
+									LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(snssdksContent);
+								}
+							} else if (type == CustomConstant.SNSSDK_TYPE_IMAGE) {
+								for (int i = 0; i < jsonArrayData.length(); i++) {
+									JSONObject jsonGroup = jsonArrayData.optJSONObject(i).optJSONObject("group");
+									if (jsonGroup != null) {
 										int mediaType = jsonGroup.optInt("media_type");
 										JSONObject largeCover;
-										if(mediaType < 3) {
+										if (mediaType < 3) {
 											largeCover = jsonGroup.optJSONObject("large_image");
-										} else if(mediaType == 3){
+										} else if (mediaType == 3) {
 											largeCover = jsonGroup.optJSONObject("medium_cover");
 										} else {
 											break;
 										}
+										int height = jsonGroup.optInt("video_height");
+										int width = jsonGroup.optInt("video_width");
 										JSONArray urlList = largeCover.optJSONArray("url_list");
 										String url = urlList.optJSONObject(0).optString("url");
 										if (!TextUtils.isEmpty(url)) {
-											SnssdkText snssdkText = new SnssdkText();
-											snssdkText.setSnssdkType(type);
+											SnssdkImage snssdkText = new SnssdkImage();
+											snssdkText.setHeight(height);
+											snssdkText.setWidth(width);
 											snssdkText.setIsCollection(0);
-											snssdkText.setSnssdkContent(url);
-											snssdksContent.add(snssdkText);
+											snssdkText.setSnssdkUrl(url);
+											snssdksImage.add(snssdkText);
 										}
 									}
+									LauncherModel.getInstance().getSnssdkImage().insertSnssdkItem(snssdksImage);
 								}
 							}
 						}
 					}
+				mLoadListener.loadLoaded(type, null);
 				}
-				LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(snssdksContent);
-				mLoadListener.loadLoaded(snssdksContent);
 			}
 		};
 		new Thread(okRunnable).start();

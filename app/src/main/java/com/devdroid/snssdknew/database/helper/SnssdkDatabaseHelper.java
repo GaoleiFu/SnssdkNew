@@ -20,18 +20,9 @@ public class SnssdkDatabaseHelper {
     /**
      * 查询当前笑话信息
      */
-    public List<SnssdkText> querySnssdkInfo(int type) {
+    public List<SnssdkText> querySnssdkInfo(int collectionStatue) {
         List<SnssdkText> list = new ArrayList<>();
-        Cursor cursor;
-        if(type == 3) {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"1", "2"}, SnssdkTextTable.ID);
-        } else if(type == 2) {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"0", "2"}, SnssdkTextTable.ID);
-        } else if(type == 1) {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"" + type, "0"}, SnssdkTextTable.ID);
-        }  else {
-            cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=? and " + SnssdkTextTable.SNSSDK_TYPE + "=?", new String[]{"0", "0"}, SnssdkTextTable.ID);
-        }
+        Cursor cursor = mHelper.query(SnssdkTextTable.TABLE_NAME, null, SnssdkTextTable.SNSSDK_COLLECTION + "=?", new String[]{"" + collectionStatue}, SnssdkTextTable.ID);
         if (null != cursor) {
             try {
                 while (cursor.moveToNext()) {

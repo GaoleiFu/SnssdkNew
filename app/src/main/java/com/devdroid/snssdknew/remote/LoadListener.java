@@ -11,5 +11,5 @@ import java.util.List;
  * I'm glad to share my knowledge with you all.
  */
 public interface LoadListener {
-    void loadLoaded(List<SnssdkText> snssdks);
+    void loadLoaded(int snssdkType, List<SnssdkText> snssdks);
 }

@@ -17,8 +17,8 @@ public class SnssdkTextDao {
         mSnssdkDatabaseHelper = new SnssdkDatabaseHelper(dataProvider);
     }
 
-    public List<SnssdkText> queryLockerInfo(int type) {
-        return mSnssdkDatabaseHelper.querySnssdkInfo(type);
+    public List<SnssdkText> queryLockerInfo(int collectionStatue) {
+        return mSnssdkDatabaseHelper.querySnssdkInfo(collectionStatue);
     }
 
     public void insertSnssdkItem(List<SnssdkText> insertList) {

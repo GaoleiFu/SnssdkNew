@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,13 +13,21 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import com.devdroid.snssdknew.R;
+import com.devdroid.snssdknew.adapter.SnssdkImageAdapter;
 import com.devdroid.snssdknew.adapter.SnssdkTextAdapter;
+import com.devdroid.snssdknew.application.LauncherModel;
+import com.devdroid.snssdknew.application.SnssdknewApplication;
+import com.devdroid.snssdknew.constant.CustomConstant;
+import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
-import com.devdroid.snssdknew.manager.SnssdkTextManager;
+import com.devdroid.snssdknew.model.SnssdkImage;
 import com.devdroid.snssdknew.model.SnssdkText;
+import com.devdroid.snssdknew.preferences.IPreferencesIds;
+import com.devdroid.snssdknew.remote.LoadListener;
+import com.devdroid.snssdknew.remote.RemoteSettingManager;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
-import com.devdroid.snssdknew.utils.log.Logger;
 
 import java.util.List;
 
@@ -29,7 +39,7 @@ import java.util.List;
  * Use the {@link SnssdkFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnRecyclerItemClickListener {
+public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnRecyclerItemClickListener, LoadListener, Handler.Callback  {
     private static final String ARG_SNSSDK_TYPE = "snssdkType";
     private static final String ARG_COLLECTION_STATUE = "collectionStatue";
     private int snssdkType;
@@ -38,6 +48,12 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private View mRootView;
+    private RemoteSettingManager mRemoteSettingManager;
+    private Handler mHandler;
+    private List<SnssdkText> mSnssdkTexts;
+    private List<SnssdkImage> mSnssdkImages;
+    private SnssdkTextAdapter mSnssdkTextAdapter;
+    private SnssdkImageAdapter mSnssdkImageAdapter;
 
     public SnssdkFragment() {
     }
@@ -72,6 +88,8 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onResume() {
         super.onResume();
+        mHandler = new Handler(this);
+        mRemoteSettingManager = new RemoteSettingManager(this);
         mSwipeRefreshLayout = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -79,20 +97,28 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST));
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
-        List<SnssdkText> mSnssdkTexts = SnssdkTextManager.getInstance().getmSnssdks(snssdkType);
-        Logger.d("11111111111111111", "mSnssdkTexts:" + mSnssdkTexts.size());
-        SnssdkTextAdapter mSnssdkAdapter = new SnssdkTextAdapter(this.getActivity(), mSnssdkTexts);
-        mSnssdkAdapter.setItemClickListener(this);
-        mRecyclerView.setAdapter(mSnssdkAdapter);
+        if(snssdkType == CustomConstant.SNSSDK_TYPE_TEXT){
+            mSnssdkTexts = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(collectionStatue);
+            mSnssdkTextAdapter = new SnssdkTextAdapter(this.getActivity(), mSnssdkTexts);
+            mSnssdkTextAdapter.setItemClickListener(this);
+            mRecyclerView.setAdapter(mSnssdkTextAdapter);
+            if(mSnssdkTexts.size() <= 0){
+                mRemoteSettingManager.connectToServer(getActivity(), snssdkType);
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        } else if(snssdkType == CustomConstant.SNSSDK_TYPE_IMAGE){
+            mSnssdkImages = LauncherModel.getInstance().getSnssdkImage().queryLockerInfo(collectionStatue);
+            mSnssdkImageAdapter = new SnssdkImageAdapter(this.getActivity(), mSnssdkImages);
+            mSnssdkImageAdapter.setItemClickListener(this);
+            mRecyclerView.setAdapter(mSnssdkImageAdapter);
+            if(mSnssdkImages.size() <= 0){
+                mRemoteSettingManager.connectToServer(getActivity(), snssdkType);
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        }
 //        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(this);
 //        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
 //        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -100,9 +126,6 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -114,12 +137,12 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onRefresh() {
-        if(snssdkType != 1) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            SnssdkTextManager.getInstance().freshMore(this.getActivity(), snssdkType);
-        } else {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if( LauncherModel.getInstance().getSharedPreferencesManager().getBoolean(IPreferencesIds.DEFAULT_SHAREPREFERENCES_OFFLINE_MODE, false)) {
+            SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
+            return;
         }
+        mRemoteSettingManager.connectToServer(this.getActivity(), snssdkType);
+        mSwipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
@@ -134,6 +157,26 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
         mRecyclerView.scrollToPosition(position);
 //        mSnssdkAdapter.setShowColumnChanged();
 //        mSnssdkAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void loadLoaded(int snssdkType, List<SnssdkText> snssdks) {
+        mHandler.sendEmptyMessage(snssdkType);
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if(snssdkType == CustomConstant.SNSSDK_TYPE_IMAGE){
+            mSnssdkImages.clear();
+            mSnssdkImages.addAll(LauncherModel.getInstance().getSnssdkImage().queryLockerInfo(collectionStatue));
+            mSnssdkImageAdapter.notifyDataSetChanged();
+        } else if(snssdkType == CustomConstant.SNSSDK_TYPE_TEXT){
+            mSnssdkTexts.clear();
+            mSnssdkTexts.addAll(LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(collectionStatue));
+            mSnssdkTextAdapter.notifyDataSetChanged();
+        }
+        return true;
     }
 
     public interface OnFragmentInteractionListener {
