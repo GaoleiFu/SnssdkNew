@@ -58,6 +58,7 @@ public class MainActivity extends BaseActivity{
     };
     private SwitchCompat mSwNetSetting;
     private SnssdkText oldSnssdkText;
+    private SnssdkFragment currentFragment;
     private SnssdkFragment mFragmentText;
     private SnssdkFragment mFragmentTextCollection;
     private SnssdkFragment mFragmentImage;
@@ -113,6 +114,7 @@ public class MainActivity extends BaseActivity{
         mFragmentImage = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_ALL);
         mFragmentImageCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_COLLECTION);
         fragmentTransaction.add(R.id.fragment_container, mFragmentText).commit();
+        currentFragment = mFragmentText;
     }
 
     private void initView() {
@@ -147,35 +149,25 @@ public class MainActivity extends BaseActivity{
 
     public void setSnssdkType(int type){
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.hide(currentFragment);
         switch (type){
             case 0:
-                if(!mFragmentText.isAdded()) {
-                    fragmentTransaction.add(R.id.fragment_container, mFragmentText);
-                } else {
-                    fragmentTransaction.show(mFragmentText);
-                }
+                currentFragment = mFragmentText;
                 break;
             case 1:
-                if(!mFragmentTextCollection.isAdded()) {
-                    fragmentTransaction.add(R.id.fragment_container, mFragmentTextCollection);
-                } else {
-                    fragmentTransaction.show(mFragmentTextCollection);
-                }
+                currentFragment = mFragmentTextCollection;
                 break;
             case 2:
-                if(!mFragmentImage.isAdded()) {
-                    fragmentTransaction.add(R.id.fragment_container, mFragmentImage);
-                } else {
-                    fragmentTransaction.show(mFragmentImage);
-                }
+                currentFragment = mFragmentImage;
                 break;
             case 3:
-                if(!mFragmentImageCollection.isAdded()) {
-                    fragmentTransaction.add(R.id.fragment_container, mFragmentImageCollection);
-                } else {
-                    fragmentTransaction.show(mFragmentImageCollection);
-                }
+                currentFragment = mFragmentImageCollection;
                 break;
+        }
+        if(!currentFragment.isAdded()) {
+            fragmentTransaction.add(R.id.fragment_container, currentFragment);
+        } else {
+            fragmentTransaction.show(currentFragment);
         }
         fragmentTransaction.commit();
     }
