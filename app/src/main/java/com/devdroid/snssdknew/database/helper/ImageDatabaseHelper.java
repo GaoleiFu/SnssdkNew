@@ -5,6 +5,7 @@ import android.database.Cursor;
 import com.devdroid.snssdknew.database.BaseDataProvider;
 import com.devdroid.snssdknew.database.params.DeletePamas;
 import com.devdroid.snssdknew.database.params.InsertParams;
+import com.devdroid.snssdknew.database.params.UpdatePamas;
 import com.devdroid.snssdknew.database.table.SnssdkImageTable;
 import com.devdroid.snssdknew.database.table.SnssdkTextTable;
 import com.devdroid.snssdknew.model.SnssdkImage;
@@ -110,4 +111,16 @@ public class ImageDatabaseHelper {
             mHelper.delete(list);
         }
     }
+
+    public void updateSnssdkItem(SnssdkImage snssdkText) {
+        ArrayList<UpdatePamas> list = new ArrayList<>();
+        ContentValues values = new ContentValues();
+        values.put(SnssdkTextTable.SNSSDK_COLLECTION,snssdkText.getIsCollection());
+        UpdatePamas update = new UpdatePamas(SnssdkImageTable.TABLE_NAME, values, SnssdkImageTable.SNSSDK_IMAGE_URL + "=?", new String[]{snssdkText.getSnssdkUrl() + ""});
+        list.add(update);
+        if (!list.isEmpty()) {
+            mHelper.update(list);
+        }
+    }
+
 }

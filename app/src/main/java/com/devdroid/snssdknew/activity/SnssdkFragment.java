@@ -2,24 +2,33 @@ package com.devdroid.snssdknew.activity;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.adapter.SnssdkImageAdapter;
 import com.devdroid.snssdknew.adapter.SnssdkTextAdapter;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.constant.CustomConstant;
+import com.devdroid.snssdknew.eventbus.OnBitmapGetFinishEvent;
 import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
+import com.devdroid.snssdknew.listener.OnDismissAndShareListener;
 import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
 import com.devdroid.snssdknew.model.SnssdkImage;
 import com.devdroid.snssdknew.model.SnssdkText;
@@ -27,9 +36,15 @@ import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import com.devdroid.snssdknew.remote.LoadListener;
 import com.devdroid.snssdknew.remote.RemoteSettingManager;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
-import java.util.List;
+import com.devdroid.snssdknew.utils.SimpleItemTouchHelperCallback;
 
-public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnRecyclerItemClickListener, LoadListener, Handler.Callback  {
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnRecyclerItemClickListener, LoadListener, Handler.Callback, OnDismissAndShareListener {
     private static final String ARG_SNSSDK_TYPE = "snssdkType";
     private static final String ARG_COLLECTION_STATUE = "collectionStatue";
     private int snssdkType;
@@ -90,7 +105,7 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
             mRecyclerView.setLayoutManager(layoutManager);
             mSnssdkTexts = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(collectionStatue);
             mSnssdkTextAdapter = new SnssdkTextAdapter(this.getActivity(), mSnssdkTexts);
-            mSnssdkTextAdapter.setItemClickListener(this);
+//            mSnssdkTextAdapter.setItemClickListener(this);
             mRecyclerView.setAdapter(mSnssdkTextAdapter);
             if(mSnssdkTexts.size() <= 0){
                 mRemoteSettingManager.connectToServer(getActivity(), snssdkType);
@@ -108,6 +123,9 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         }
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(this);
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -136,6 +154,13 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onItemClick(RecyclerView.Adapter parent, View v, int position, int showType) {
+        if(snssdkType == CustomConstant.SNSSDK_TYPE_IMAGE){
+            Intent intent = new Intent(getActivity(), ImageViewPagerActivity.class);
+            intent.putExtra("snssdkType", snssdkType);
+            intent.putExtra("collectionStatue", collectionStatue);
+            intent.putExtra("position", position);
+            getActivity().startActivity(intent);
+        }
 //        if(showType == 2) {
 //            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 //            mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -166,6 +191,102 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
         return true;
     }
 
+
+    @Override
+    public void onItemDismiss(int position) {
+        if(snssdkType == CustomConstant.SNSSDK_TYPE_IMAGE){
+            SnssdkImage snssdk = mSnssdkImages.get(position);
+            LauncherModel.getInstance().getSnssdkImage().deleteSnssdkItem(snssdk);
+            mSnssdkImages.remove(position);
+            mSnssdkImageAdapter.notifyItemRemoved(position);
+        } else if(snssdkType == CustomConstant.SNSSDK_TYPE_TEXT){
+            SnssdkText snssdkText = mSnssdkTexts.get(position);
+            LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdkText);
+            mSnssdkTexts.remove(position);
+            mSnssdkTextAdapter.notifyItemRemoved(position);
+        }
+    }
+
+    @Override
+    public void onItemShare(int position, View currentView) {
+        if(snssdkType == CustomConstant.SNSSDK_TYPE_IMAGE){
+            SnssdkImage snssdk = mSnssdkImages.get(position);
+            if(snssdk.getIsCollection() == 1) {
+                shareImage(snssdk.getSnssdkUrl());
+            } else {
+                snssdk.setIsCollection(1);
+                LauncherModel.getInstance().getSnssdkImage().updateSnssdkItem(snssdk);
+                mSnssdkImages.remove(position);
+                mSnssdkImageAdapter.notifyItemRemoved(position);
+            }
+        } else if(snssdkType == CustomConstant.SNSSDK_TYPE_TEXT){
+            SnssdkText snssdk = mSnssdkTexts.get(position);
+            if(snssdk.getIsCollection() == 1) {
+                shareText(snssdk.getSnssdkContent());
+                mSnssdkImageAdapter.notifyItemChanged(position);
+            } else {
+                LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdk);
+                mSnssdkTexts.remove(position);
+                mSnssdkTextAdapter.notifyItemRemoved(position);
+            }
+        }
+    }
+
+    private void shareText(String text) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TITLE,text);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+        shareIntent.setType("text/plain");
+        this.startActivity(Intent.createChooser(shareIntent, "分享到"));
+    }
+
+    private void shareImage(final String url) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final Bitmap bitmap = Glide.with(SnssdknewApplication.getAppContext()).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                    String[] filePaths = url.split("/|\\.");
+                    final String fileName = filePaths[filePaths.length - 2] + ".jpg";
+                    SnssdknewApplication.getGlobalEventBus().post(new OnBitmapGetFinishEvent(bitmap, fileName));
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    private File saveImageFile(Bitmap bmp, String fileName) {
+        String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk" + File.separator + "share";
+        File filePath = new File(imagePath);
+        if (!filePath.isDirectory()) {
+            filePath.mkdirs();
+        }
+        // 首先保存图片
+        File file = new File(filePath ,fileName);
+        FileOutputStream fos = null;
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+                fos = new FileOutputStream(file);
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file;
+    }
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }

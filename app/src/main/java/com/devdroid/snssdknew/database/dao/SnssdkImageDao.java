@@ -27,4 +27,7 @@ public class SnssdkImageDao {
     public void deleteSnssdkItem(SnssdkImage snssdkText) {
         mSnssdkDatabaseHelper.deleteSnssdkItem(snssdkText);
     }
+    public void updateSnssdkItem(SnssdkImage snssdkText) {
+        mSnssdkDatabaseHelper.updateSnssdkItem(snssdkText);
+    }
 }

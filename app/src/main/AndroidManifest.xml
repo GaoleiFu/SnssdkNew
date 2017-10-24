@@ -2,12 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.devdroid.snssdknew">
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name=".application.SnssdknewApplication"
         android:allowBackup="true"
@@ -19,31 +21,38 @@
         <meta-data
             android:name="channel"
             android:value="${COM_DEVDROID_CHANNEL_VALUE}" />
+
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/nav_string_text"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
             <meta-data
                 android:name="android.service.chooser.chooser_target_service"
                 android:value=".SampleChooserTargetService" />
         </activity>
-        <activity android:name=".activity.SplashActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".base.BaseActivity"/>
-        <activity android:name=".activity.FeedbackActivity"
-                  android:label="@string/nav_string_feedback" />
-        <activity android:name=".activity.AboutActivity"
-                  android:label="@string/nav_string_about">
-        </activity>
+        <activity android:name=".base.BaseActivity" />
+        <activity
+            android:name=".activity.FeedbackActivity"
+            android:label="@string/nav_string_feedback" />
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/nav_string_about"></activity>
+        <activity android:name=".activity.ImageViewPagerActivity"></activity>
     </application>
 
 </manifest>
