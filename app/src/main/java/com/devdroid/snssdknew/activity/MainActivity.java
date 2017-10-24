@@ -15,22 +15,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.base.BaseActivity;
 import com.devdroid.snssdknew.constant.CustomConstant;
 import com.devdroid.snssdknew.eventbus.OnBitmapGetFinishEvent;
-import com.devdroid.snssdknew.eventbus.OnSnssdkLoadedEvent;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
 import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 主界面
@@ -40,11 +36,6 @@ public class MainActivity extends BaseActivity{
      * 事件监听
      */
     private final Object mEventSubscriber = new Object() {
-        @SuppressWarnings("unused")
-        public void onEventMainThread(OnSnssdkLoadedEvent event) {
-            if(event.getPosition() == 0) {
-            }
-        }
         @SuppressWarnings("unused")
         public void onEventMainThread(OnBitmapGetFinishEvent event) {
             File cacheFile =  saveImageFile(event.getBitmap(), event.getFileName());
@@ -171,34 +162,7 @@ public class MainActivity extends BaseActivity{
         }
         fragmentTransaction.commit();
     }
-
-
-    private void shareText(String text) {
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TITLE,text);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
-        shareIntent.setType("text/plain");
-        this.startActivity(Intent.createChooser(shareIntent, "分享到"));
-    }
-
-    private void shareImage(final String url) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final Bitmap bitmap = Glide.with(MainActivity.this).load(url).asBitmap().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
-                    String[] filePaths = url.split("/|\\.");
-                    final String fileName = filePaths[filePaths.length - 2] + ".jpg";
-                    SnssdknewApplication.getGlobalEventBus().post(new OnBitmapGetFinishEvent(bitmap, fileName));
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
-
+    
     private File saveImageFile(Bitmap bmp, String fileName) {
         String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk" + File.separator + "share";
         File filePath = new File(imagePath);

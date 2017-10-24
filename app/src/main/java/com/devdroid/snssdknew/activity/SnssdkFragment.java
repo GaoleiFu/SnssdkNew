@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,7 +16,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.devdroid.snssdknew.R;
@@ -37,10 +35,6 @@ import com.devdroid.snssdknew.remote.LoadListener;
 import com.devdroid.snssdknew.remote.RemoteSettingManager;
 import com.devdroid.snssdknew.utils.DividerItemDecoration;
 import com.devdroid.snssdknew.utils.SimpleItemTouchHelperCallback;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -256,36 +250,6 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
             }
         });
         thread.start();
-    }
-
-    private File saveImageFile(Bitmap bmp, String fileName) {
-        String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "snssdk" + File.separator + "share";
-        File filePath = new File(imagePath);
-        if (!filePath.isDirectory()) {
-            filePath.mkdirs();
-        }
-        // 首先保存图片
-        File file = new File(filePath ,fileName);
-        FileOutputStream fos = null;
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-                fos = new FileOutputStream(file);
-                bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                fos.flush();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return file;
     }
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
