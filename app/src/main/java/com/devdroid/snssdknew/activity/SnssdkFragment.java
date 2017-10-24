@@ -85,9 +85,9 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mRecyclerView = mRootView.findViewById(R.id.recyclerView_snssdk_fragment);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this.getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
         if(snssdkType == CustomConstant.SNSSDK_TYPE_TEXT){
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+            mRecyclerView.setLayoutManager(layoutManager);
             mSnssdkTexts = LauncherModel.getInstance().getSnssdkTextDao().queryLockerInfo(collectionStatue);
             mSnssdkTextAdapter = new SnssdkTextAdapter(this.getActivity(), mSnssdkTexts);
             mSnssdkTextAdapter.setItemClickListener(this);
@@ -97,6 +97,8 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         } else if(snssdkType == CustomConstant.SNSSDK_TYPE_IMAGE){
+            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
             mSnssdkImages = LauncherModel.getInstance().getSnssdkImage().queryLockerInfo(collectionStatue);
             mSnssdkImageAdapter = new SnssdkImageAdapter(this.getActivity(), mSnssdkImages);
             mSnssdkImageAdapter.setItemClickListener(this);

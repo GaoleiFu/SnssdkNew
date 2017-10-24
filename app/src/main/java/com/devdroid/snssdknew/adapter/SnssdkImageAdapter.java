@@ -17,8 +17,6 @@ import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.listener.OnRecyclerItemClickListener;
 import com.devdroid.snssdknew.model.SnssdkImage;
-import com.devdroid.snssdknew.utils.log.Logger;
-
 import java.util.List;
 
 
@@ -28,15 +26,12 @@ import java.util.List;
  */
 
 public class SnssdkImageAdapter  extends RecyclerView.Adapter<SnssdkImageAdapter.ViewHolder> {
-
-    private Context mContext;
     private List<SnssdkImage> snssdks;
     private final int mScreenWidth;
     private OnRecyclerItemClickListener listener;
-    private int mShowColumn = 1;
+    private int mShowColumn = 2;
 
     public SnssdkImageAdapter(Context context, List<SnssdkImage> snssdks){
-        this.mContext = context;
         this.snssdks = snssdks;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         assert wm != null;
@@ -59,35 +54,27 @@ public class SnssdkImageAdapter  extends RecyclerView.Adapter<SnssdkImageAdapter
     public void onBindViewHolder(SnssdkImageAdapter.ViewHolder holder, final int position) {
         if(snssdks != null && snssdks.size() > position) {
             SnssdkImage snssdk = snssdks.get(position);
-            Logger.d("111111111111111", "Width：" + snssdk.getWidth() + "    Height:" + snssdk.getHeight());
             final SnssdkImageAdapter.ViewHolder viewHolderImage = holder;
             String url = snssdk.getSnssdkUrl();
             if(url.endsWith("gif")) {
                 Glide.with(SnssdknewApplication.getAppContext()).load(snssdk.getSnssdkUrl())
                         .asGif().crossFade().into(viewHolderImage.mImageView);
             } else {
-                if(snssdk.getHeight() != 0){
-                    Glide.with(SnssdknewApplication.getAppContext()).load(snssdk.getSnssdkUrl()).asBitmap().thumbnail(0.1f).diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .fitCenter().override(mScreenWidth, mScreenWidth * snssdk.getWidth() / snssdk.getHeight())
-                            .into(viewHolderImage.mImageView);
-                } else {
-                    Glide.with(SnssdknewApplication.getAppContext()).load(snssdk.getSnssdkUrl()).asBitmap().thumbnail(0.1f).diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .fitCenter().into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                            int imageWidth = resource.getWidth();
-                            int imageHeight = resource.getHeight();
-                            int height = mScreenWidth / mShowColumn * imageHeight / imageWidth;
-                            ViewGroup.LayoutParams para = viewHolderImage.mImageView.getLayoutParams();
-                            para.height = height;
-                            para.width = mScreenWidth / mShowColumn;
-                            viewHolderImage.mImageView.setImageBitmap(resource);
-                        }
-                    });
-                }
+                Glide.with(SnssdknewApplication.getAppContext()).load(snssdk.getSnssdkUrl()).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .fitCenter().into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        int imageWidth = resource.getWidth();
+                        int imageHeight = resource.getHeight();
+                        int height = mScreenWidth / mShowColumn * imageHeight / imageWidth;
+                        ViewGroup.LayoutParams para = viewHolderImage.mImageView.getLayoutParams();
+                        para.height = height;
+                        para.width = mScreenWidth / mShowColumn;
+                        viewHolderImage.mImageView.setImageBitmap(resource);
+                    }
+                });
             }
             if(listener != null){
-//                viewHolderImage.mImageView.setTag(snssdk);
                 viewHolderImage.mImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -104,7 +91,7 @@ public class SnssdkImageAdapter  extends RecyclerView.Adapter<SnssdkImageAdapter
         return snssdks.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
         ViewHolder(View itemView) {
             super(itemView);
