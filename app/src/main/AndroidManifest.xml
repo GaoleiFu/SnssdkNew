@@ -21,17 +21,14 @@
         <meta-data
             android:name="channel"
             android:value="${COM_DEVDROID_CHANNEL_VALUE}" />
-
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/nav_string_text"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <meta-data
                 android:name="android.service.chooser.chooser_target_service"
                 android:value=".SampleChooserTargetService" />
@@ -41,7 +38,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -51,8 +47,9 @@
             android:label="@string/nav_string_feedback" />
         <activity
             android:name=".activity.AboutActivity"
-            android:label="@string/nav_string_about"></activity>
-        <activity android:name=".activity.ImageViewPagerActivity"></activity>
+            android:label="@string/nav_string_about"/>
+        <activity android:name=".activity.ImageViewPagerActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
