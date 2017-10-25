@@ -141,6 +141,7 @@ public class FeedbackActivity extends BaseActivity {
         emailIntent.setData(uri);
         try {
             startActivity(emailIntent);
+            overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
         } catch (Exception ex) {
             Toast.makeText(FeedbackActivity.this, getResources().getString(R.string.activity_setting_feedback_no_email), Toast.LENGTH_SHORT).show();
         }

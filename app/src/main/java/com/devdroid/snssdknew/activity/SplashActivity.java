@@ -47,6 +47,7 @@ public class SplashActivity extends BaseActivity {
 				Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 				SplashActivity.this.startActivity(intent);
 				SplashActivity.this.finish();
+				SplashActivity.this.overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
 			}
 		}, 1000);
 	}

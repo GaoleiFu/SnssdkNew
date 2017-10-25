@@ -65,7 +65,7 @@ public class SnssdkDatabaseHelper {
     }
     public void insertSnssdkItem(SnssdkText snssdkText) {
         ArrayList<InsertParams> list = new ArrayList<>();
-        if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + snssdkText + "'")) {
+        if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + snssdkText.getSnssdkContent() + "'")) {
             ContentValues values = new ContentValues();
             values.put(SnssdkTextTable.COMPONENTNAME,snssdkText.getSnssdkContent());
             values.put(SnssdkTextTable.SNSSDK_COLLECTION,snssdkText.getIsCollection());
@@ -79,7 +79,7 @@ public class SnssdkDatabaseHelper {
     public void insertSnssdkItem(List<SnssdkText> insertSnssdkList) {
         ArrayList<InsertParams> list = new ArrayList<>();
         for (SnssdkText snssdkText : insertSnssdkList) {
-            if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + snssdkText + "'")) {
+            if (!checkExist("select * from " + SnssdkTextTable.TABLE_NAME + " where " + SnssdkTextTable.COMPONENTNAME + "='" + snssdkText.getSnssdkContent() + "'")) {
                 ContentValues values = new ContentValues();
                 values.put(SnssdkTextTable.COMPONENTNAME,snssdkText.getSnssdkContent());
                 values.put(SnssdkTextTable.SNSSDK_COLLECTION,snssdkText.getIsCollection());
@@ -105,7 +105,7 @@ public class SnssdkDatabaseHelper {
         ArrayList<UpdatePamas> list = new ArrayList<>();
         ContentValues values = new ContentValues();
         values.put(SnssdkTextTable.SNSSDK_COLLECTION,snssdkText.getIsCollection());
-        UpdatePamas update = new UpdatePamas(SnssdkTextTable.TABLE_NAME, values, SnssdkTextTable.ID + "=?", new String[]{snssdkText.getId() + ""});
+        UpdatePamas update = new UpdatePamas(SnssdkTextTable.TABLE_NAME, values, SnssdkTextTable.COMPONENTNAME + "=?", new String[]{snssdkText.getSnssdkContent() + ""});
         list.add(update);
         if (!list.isEmpty()) {
             mHelper.update(list);

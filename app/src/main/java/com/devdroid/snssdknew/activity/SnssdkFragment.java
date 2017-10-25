@@ -156,15 +156,8 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
             intent.putExtra("collectionStatue", collectionStatue);
             intent.putExtra("position", position);
             getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
         }
-//        if(showType == 2) {
-//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-//            mRecyclerView.setLayoutManager(gridLayoutManager);
-//        } else {
-//            StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-//            mRecyclerView.setLayoutManager(gridLayoutManager);
-//        }
-//        mRecyclerView.scrollToPosition(position);
     }
 
     @Override
@@ -235,7 +228,8 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
         shareIntent.putExtra(Intent.EXTRA_TITLE,text);
         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
         shareIntent.setType("text/plain");
-        this.startActivity(Intent.createChooser(shareIntent, "分享到"));
+        getActivity().startActivity(Intent.createChooser(shareIntent, "分享到"));
+        getActivity().overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
     }
 
     private void shareImage(final String url) {

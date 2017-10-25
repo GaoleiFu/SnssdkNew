@@ -73,6 +73,7 @@ public class MainActivity extends BaseActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==0 || item.getItemId() == android.R.id.home){
             finish();
+            overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_from_right);
             return true;
         } else if(item.getItemId() == R.id.action_resave && oldSnssdkText != null){
             LauncherModel.getInstance().getSnssdkTextDao().insertSnssdkItem(oldSnssdkText);

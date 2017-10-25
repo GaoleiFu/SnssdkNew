@@ -1,11 +1,9 @@
 package com.devdroid.snssdknew.activity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
+import android.view.WindowManager;
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.adapter.ImagePagerAdapter;
 import com.devdroid.snssdknew.base.BaseActivity;
@@ -16,9 +14,7 @@ public class ImageViewPagerActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_view_pager);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(67108864);
-        }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mVpImage = (ViewPager)findViewById(R.id.vp_image_view_pager);
         initData();
     }

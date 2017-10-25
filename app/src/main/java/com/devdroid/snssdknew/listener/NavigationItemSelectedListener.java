@@ -48,9 +48,11 @@ public class NavigationItemSelectedListener  implements NavigationView.OnNavigat
                 break;
             case R.id.nav_send :
                 mAppCompatActivity.startActivity(new Intent(mAppCompatActivity, FeedbackActivity.class));
+                mAppCompatActivity.overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
                 break;
             case R.id.nav_about :
                 mAppCompatActivity.startActivity(new Intent(mAppCompatActivity, AboutActivity.class));
+                mAppCompatActivity.overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -68,5 +70,6 @@ public class NavigationItemSelectedListener  implements NavigationView.OnNavigat
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareAppText);
         shareIntent.setType("text/plain");
         mAppCompatActivity.startActivity(Intent.createChooser(shareIntent, "分享到"));
+        mAppCompatActivity.overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
     }
 }

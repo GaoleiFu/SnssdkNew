@@ -48,6 +48,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_from_right);
                 break;
         }
         return true;
@@ -61,6 +62,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                 intent .setData(Uri.parse(url));
                 startActivity(intent);
                 finish();
+                overridePendingTransition(R.anim.activity_in_from_right,R.anim.activity_out_from_left);
                 break;
         }
     }
