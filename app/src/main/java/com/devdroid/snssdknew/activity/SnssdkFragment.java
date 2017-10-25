@@ -142,8 +142,10 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
             SnssdknewApplication.getGlobalEventBus().post(new OnSnssdkLoadedEvent(0));
             return;
         }
-        mRemoteSettingManager.connectToServer(this.getActivity(), snssdkType);
-        mSwipeRefreshLayout.setRefreshing(true);
+        if(collectionStatue != 1) {
+            mRemoteSettingManager.connectToServer(this.getActivity(), snssdkType);
+            mSwipeRefreshLayout.setRefreshing(true);
+        }
     }
 
     @Override
@@ -217,9 +219,10 @@ public class SnssdkFragment extends Fragment implements SwipeRefreshLayout.OnRef
             SnssdkText snssdk = mSnssdkTexts.get(position);
             if(snssdk.getIsCollection() == 1) {
                 shareText(snssdk.getSnssdkContent());
-                mSnssdkImageAdapter.notifyItemChanged(position);
+                mSnssdkTextAdapter.notifyItemChanged(position);
             } else {
-                LauncherModel.getInstance().getSnssdkTextDao().deleteSnssdkItem(snssdk);
+                snssdk.setIsCollection(1);
+                LauncherModel.getInstance().getSnssdkTextDao().updateSnssdkItem(snssdk);
                 mSnssdkTexts.remove(position);
                 mSnssdkTextAdapter.notifyItemRemoved(position);
             }
