@@ -13,8 +13,8 @@ android {
         applicationId "com.devdroid.snssdknew"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 4
-        versionName "1.4"
+        versionCode 5
+        versionName "1.5"
         manifestPlaceholders = [COM_DEVDROID_CHANNEL_VALUE: "200"]
     }
 
