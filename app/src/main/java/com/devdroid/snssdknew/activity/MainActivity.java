@@ -15,15 +15,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.Toast;
+
 import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.application.LauncherModel;
 import com.devdroid.snssdknew.application.SnssdknewApplication;
 import com.devdroid.snssdknew.base.BaseActivity;
 import com.devdroid.snssdknew.constant.CustomConstant;
+import com.devdroid.snssdknew.database.DatabaseBackupTask;
 import com.devdroid.snssdknew.eventbus.OnBitmapGetFinishEvent;
+import com.devdroid.snssdknew.eventbus.OnUpdateProgressBackup;
 import com.devdroid.snssdknew.listener.NavigationItemSelectedListener;
 import com.devdroid.snssdknew.model.SnssdkText;
 import com.devdroid.snssdknew.preferences.IPreferencesIds;
+import com.devdroid.snssdknew.utils.FileUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +38,7 @@ import java.io.IOException;
  * 主界面
  */
 public class MainActivity extends BaseActivity{
+    
     /**
      * 事件监听
      */
@@ -45,6 +52,23 @@ public class MainActivity extends BaseActivity{
             intent.setType("image/*");
             intent.putExtra("sms_body", event.getFileName());
             MainActivity.this.startActivity(intent);
+        }
+    
+        @SuppressWarnings("unused")
+        public void onEventMainThread(OnUpdateProgressBackup event) {
+            if(event.getTypeProgress() == 0){  //数据还原
+                if(event.getProgressNum() == 100){
+                    Toast.makeText(MainActivity.this, getString(R.string.ime_setting_restore_success), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, getString(R.string.restore_data_data_bad), Toast.LENGTH_SHORT).show();
+                }
+            } else {   //数据备份
+                if(event.getProgressNum() == 100){
+                    Toast.makeText(MainActivity.this, getString(R.string.ime_setting_backup_success), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, getString(R.string.ime_setting_backup_failed), Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     };
     private SwitchCompat mSwNetSetting;
@@ -192,5 +216,23 @@ public class MainActivity extends BaseActivity{
             }
         }
         return file;
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)  {
+        switch (requestCode) {
+            case 1111:
+                if (resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+                    final String path = FileUtils.getPath(this, uri);
+                    if(path != null && path.endsWith(".back")) {
+                        DatabaseBackupTask mBackupTask = new DatabaseBackupTask(MainActivity.this);
+                        mBackupTask.execute(CustomConstant.COMMAND_RESTORE_INTERNAL_STORAGE, path);
+                    } else {
+                        Toast.makeText(this, getString(R.string.restore_data_select_error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
     }
 }

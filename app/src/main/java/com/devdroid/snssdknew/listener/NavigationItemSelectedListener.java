@@ -1,5 +1,6 @@
 package com.devdroid.snssdknew.listener;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
@@ -13,6 +14,8 @@ import com.devdroid.snssdknew.R;
 import com.devdroid.snssdknew.activity.AboutActivity;
 import com.devdroid.snssdknew.activity.FeedbackActivity;
 import com.devdroid.snssdknew.activity.MainActivity;
+import com.devdroid.snssdknew.constant.CustomConstant;
+import com.devdroid.snssdknew.database.DatabaseBackupTask;
 import com.devdroid.snssdknew.utils.DevicesUtils;
 
 /**
@@ -43,6 +46,13 @@ public class NavigationItemSelectedListener  implements NavigationView.OnNavigat
             case R.id.nav_collection_image :
                 mAppCompatActivity.setSnssdkType(3);
                 break;
+            case R.id.nav_data_export :
+                new DatabaseBackupTask(mAppCompatActivity).execute(CustomConstant.COMMAND_BACKUP_INTERNAL_STORAGE);
+                Toast.makeText(mAppCompatActivity, mAppCompatActivity.getString(R.string.ime_setting_backuping), Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_data_import :
+                showFileChooser();
+                break;
             case R.id.nav_share :
                 shareText();
                 break;
@@ -57,6 +67,20 @@ public class NavigationItemSelectedListener  implements NavigationView.OnNavigat
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+    
+    /**
+     * 打开文件选择器
+     */
+    private void showFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        try {
+            mAppCompatActivity.startActivityForResult(Intent.createChooser(intent, "Select a File to Import"), 1111);
+        } catch (ActivityNotFoundException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**

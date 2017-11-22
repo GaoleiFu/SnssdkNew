@@ -23,6 +23,14 @@
     <item android:title="@string/nav_string_other">
         <menu>
             <item
+                android:id="@+id/nav_data_export"
+                android:icon="@drawable/ic_menu_data_export"
+                android:title="@string/nav_string_data_export" />
+            <item
+                android:id="@+id/nav_data_import"
+                android:icon="@drawable/ic_menu_data_import"
+                android:title="@string/nav_string_data_import" />
+            <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="@string/nav_string_share" />

@@ -13,6 +13,9 @@
     <string name="nav_string_other">其它</string>
     <string name="nav_string_image">图片</string>
     <string name="nav_string_feedback">反馈</string>
+
+    <string name="nav_string_data_export">备份</string>
+    <string name="nav_string_data_import">还原</string>
     <string name="nav_string_about">关于</string>
     <string name="feedback_content">以下是为解决您的问题所需的系统信息。我们绝不会收集您的任何个人信息。</string>
     <string name="container_hint_setting_feedback">请在这里写你的评论，提供尽可能多的细节。我们一直在倾听和改进。</string>
@@ -30,5 +33,11 @@
     <string name="share_app_text">这里有一个很好玩的应用，大家可以体验一下。</string>
     <string name="nav_string_collection_image">图片收藏</string>
     <string name="nav_string_collection_text">笑话收藏</string>
+    <string name="ime_setting_backuping">正在导出数据</string>
+    <string name="ime_setting_backup_success">数据已成功导出到手机根目录</string>
+    <string name="ime_setting_backup_failed">导出数据失败，请重试</string>
+    <string name="ime_setting_restore_success">导入数据成功</string>
+    <string name="restore_data_data_bad">导入数据失败</string>
+    <string name="restore_data_select_error">请选择正确的备份文件</string>
     <string name="action_resave">还原</string>
 </resources>

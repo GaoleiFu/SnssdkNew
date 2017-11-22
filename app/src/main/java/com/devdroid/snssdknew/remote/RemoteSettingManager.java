@@ -73,6 +73,7 @@ public class RemoteSettingManager {
 										} else {
 											break;
 										}
+										if(largeCover == null) break;
 										int height = jsonGroup.optInt("video_height");
 										int width = jsonGroup.optInt("video_width");
 										JSONArray urlList = largeCover.optJSONArray("url_list");
