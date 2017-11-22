@@ -31,4 +31,12 @@
     <string name="nav_string_collection_image">圖片收藏</string>
     <string name="nav_string_collection_text">笑話收藏</string>
     <string name="action_resave">還原</string>
+    <string name="ime_setting_backuping">正在導出數據</string>
+    <string name="ime_setting_backup_success">數據已成功導出到手機根目錄</string>
+    <string name="ime_setting_backup_failed">導出數據失敗，請重試</string>
+    <string name="ime_setting_restore_success">導入數據成功</string>
+    <string name="restore_data_data_bad">導入數據失敗</string>
+    <string name="restore_data_select_error">請選擇正確的備份文件</string>
+    <string name="nav_string_data_export">備份</string>
+    <string name="nav_string_data_import">還原</string>
 </resources>
