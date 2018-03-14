@@ -40,4 +40,8 @@
     <string name="restore_data_data_bad">导入数据失败</string>
     <string name="restore_data_select_error">请选择正确的备份文件</string>
     <string name="action_resave">还原</string>
+
+    <string name="shortcut_read_snssdk_lable">查看文本</string>
+    <string name="shortcut_see_picture_lable">查看图片</string>
+    <string name="shortcut_see_collection_picture_lable">查看收藏</string>
 </resources>

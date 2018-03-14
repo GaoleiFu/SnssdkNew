@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="shortcut_read_snssdk"
+        android:enabled="true"
+        android:icon="@drawable/icon_shortcut_snssdk"
+        android:shortcutShortLabel="@string/shortcut_read_snssdk_lable">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.devdroid.snssdknew"
+            android:targetClass="com.devdroid.snssdknew.activity.MainActivity">
+            <extra
+                android:name="action"
+                android:value="read_snssdk"/>
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_see_picture"
+        android:enabled="true"
+        android:icon="@drawable/icon_shortcut_picture"
+        android:shortcutShortLabel="@string/shortcut_see_picture_lable">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.devdroid.snssdknew"
+            android:targetClass="com.devdroid.snssdknew.activity.MainActivity"><extra
+            android:name="action"
+            android:value="see_picture"/>
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_see_collection_picture"
+        android:enabled="true"
+        android:icon="@drawable/icon_shortcut_collection"
+        android:shortcutShortLabel="@string/shortcut_see_collection_picture_lable">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.devdroid.snssdknew"
+            android:targetClass="com.devdroid.snssdknew.activity.MainActivity"><extra
+            android:name="action"
+            android:value="see_collection_picture"/>
+        </intent>
+    </shortcut>
+</shortcuts>

@@ -88,7 +88,23 @@ public class MainActivity extends BaseActivity{
         intData();
         SnssdknewApplication.getGlobalEventBus().register(mEventSubscriber);
     }
-
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        if(intent != null){
+            String action = intent.getStringExtra("action");
+            if("read_snssdk".equals(action)){
+                setSnssdkType(0);
+            } else if("see_picture".equals(action)){
+                setSnssdkType(2);
+            }else if("see_collection_picture".equals(action)){
+                setSnssdkType(3);
+            }
+        }
+    }
+    
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;

@@ -6,18 +6,18 @@
             android:id="@+id/nav_text"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/nav_string_text" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/nav_string_image" />
+        <!--<item-->
+            <!--android:id="@+id/nav_gallery"-->
+            <!--android:icon="@drawable/ic_menu_camera"-->
+            <!--android:title="@string/nav_string_image" />-->
         <item
             android:id="@+id/nav_collection_text"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/nav_string_collection_text" />
-        <item
-            android:id="@+id/nav_collection_image"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/nav_string_collection_image" />
+        <!--<item-->
+            <!--android:id="@+id/nav_collection_image"-->
+            <!--android:icon="@drawable/ic_menu_slideshow"-->
+            <!--android:title="@string/nav_string_collection_image" />-->
     </group>
 
     <item android:title="@string/nav_string_other">
