@@ -1,6 +1,7 @@
 package com.devdroid.snssdknew.activity;
 
 import android.app.FragmentTransaction;
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -131,6 +132,8 @@ public class MainActivity extends BaseActivity{
         mFragmentImageCollection = SnssdkFragment.newInstance(CustomConstant.SNSSDK_TYPE_IMAGE, CustomConstant.SNSSDK_COLLECTION);
         fragmentTransaction.add(R.id.fragment_container, mFragmentText).commit();
         currentFragment = mFragmentText;
+        BackupManager bm = new BackupManager(this);
+        bm.dataChanged();
     }
 
     private void initView() {
