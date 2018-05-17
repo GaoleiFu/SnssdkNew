@@ -39,4 +39,7 @@
     <string name="restore_data_select_error">請選擇正確的備份文件</string>
     <string name="nav_string_data_export">備份</string>
     <string name="nav_string_data_import">還原</string>
+    <string name="shortcut_read_snssdk_lable">查看文字</string>
+    <string name="shortcut_see_picture_lable">查看圖片</string>
+    <string name="shortcut_see_collection_picture_lable">查看收藏</string>
 </resources>
